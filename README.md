@@ -1,6 +1,6 @@
 # Automaton Equivalence for Tractable Belief-Driven Systems
 
-This repository accompanies the discrete paper *Automaton Equivalence for Tractable Belief-Driven Systems*.
+This repository accompanies the paper *Automaton Equivalence for Tractable Belief-Driven Systems*.
 
 ## Submission
 
