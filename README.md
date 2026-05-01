@@ -2,10 +2,6 @@
 
 This repository accompanies the paper *Automaton Equivalence for Tractable Belief-Driven Systems*.
 
-## Submission
-
-- `discrete/online_full_behavior.tex` — LNCS submission source.
-
 Assuming FPT ≠ W[1]: any recursively enumerable class of embodied systems supporting uniform tractable belief revision over arbitrary constraint relations with bounded arity has bounded-treewidth constraint structure; consequently, the set of all action sequences any such system can produce consistently with its beliefs forms a (k+1)-MCFL, where k is the uniform treewidth bound for the class.
 
 ## Lean formalization
