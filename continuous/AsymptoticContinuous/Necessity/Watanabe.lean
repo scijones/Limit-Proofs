@@ -1,19 +1,19 @@
-﻿/-
+/-
 Copyright (c) 2026 Steven J. Jones. All rights reserved.
 Released under the MIT license as described in the file LICENSE.
 -/
 import AsymptoticContinuous.Agent.Defs
 
 /-!
-# Watanabe Backward Reduction â€” Singular Model Bridge
+# Watanabe Backward Reduction — Singular Model Bridge
 
 For singular models, BvM fails: the Fisher information is degenerate
-(rank-deficient or zero) at the true parameter wâ‚€. This includes neural
+(rank-deficient or zero) at the true parameter w₀. This includes neural
 networks, mixture models, reduced-rank regression, HMMs with redundant
-states â€” essentially all models of practical interest in modern ML.
+states — essentially all models of practical interest in modern ML.
 
 The Watanabe bridge provides an alternative route:
-  learning success + latent variables â†’ tractable partition function.
+  learning success + latent variables → tractable partition function.
 This arrives at the same downstream input (HasTractableApproxPartitionFunction)
 as BvM but without requiring regularity.
 
@@ -25,13 +25,13 @@ For any statistical model (regular or singular), the Bayes posterior
 predictive p(x_{n+1} | x^n) = Z_{n+1}/Z_n is the unique predictor
 achieving the optimal generalization rate:
 
-    G_n = K(w*) + (Î»/n) log n + o(log n / n)
+    G_n = K(w*) + (λ/n) log n + o(log n / n)
 
-where Î» is the real log canonical threshold (RLCT).
+where λ is the real log canonical threshold (RLCT).
 
 In the regular case, MLE also achieves an optimal rate (d/(2n)), so
 non-Bayesian methods exist. In the singular case, MLE may not exist
-(degenerate Fisher), or achieves the worse rate d/(2n) > Î»/n Â· log n.
+(degenerate Fisher), or achieves the worse rate d/(2n) > λ/n · log n.
 The Bayes predictive is the uniquely optimal method.
 
 ### Step 2: Internal computational requirements
@@ -45,7 +45,7 @@ posterior).
 
 For a graphical model with latent variables, each likelihood evaluation:
 
-    p(x_obs | w) = (1/Z(w)) Î£_h âˆ_C Ïˆ_C(x_C, h_C; w)
+    p(x_obs | w) = (1/Z(w)) Σ_h ∏_C ψ_C(x_C, h_C; w)
 
 requires marginalizing over the hidden variables h. This marginalization
 is a sum-product computation on the graph whose complexity is governed
@@ -56,7 +56,7 @@ performing poly-time partition function evaluations.
 
 The learner's success implies poly-time Z(w) computation. The existing
 class_partition_general_necessity axiom (Marx 2010, under ETH) then
-gives: tractable Z across a class with unbounded N â†’ bounded treewidth.
+gives: tractable Z across a class with unbounded N → bounded treewidth.
 
 ## Non-circularity
 
@@ -67,20 +67,20 @@ This argument combines two elements:
   Z(w) evaluations for graphical models with latents
 
 We axiomatize the conclusion directly:
-  poly-time optimal learning + latents â†’ tractable Z.
+  poly-time optimal learning + latents → tractable Z.
 
 ## On latent variables
 
 The HasLatentVariables hypothesis is genuinely load-bearing.
 
 For fully-observed models without latents:
-  p(x | w) = âˆ_C Ïˆ_C(x_C; w) / Z(w)
-MCMC methods can use likelihood ratios p(x|wâ‚)/p(x|wâ‚‚) = Z(wâ‚‚)/Z(wâ‚) Â·
-âˆ(Ïˆ ratio), where Z cancels. So inference can be tractable without
+  p(x | w) = ∏_C ψ_C(x_C; w) / Z(w)
+MCMC methods can use likelihood ratios p(x|w₁)/p(x|w₂) = Z(w₂)/Z(w₁) ·
+∏(ψ ratio), where Z cancels. So inference can be tractable without
 computing Z.
 
 For models with latents:
-  p(x_obs | w) = Î£_h âˆ_C Ïˆ_C(x_obs, h; w) / Z(w)
+  p(x_obs | w) = Σ_h ∏_C ψ_C(x_obs, h; w) / Z(w)
 The marginalization over h is a sum over the graph that cannot be avoided
 by taking ratios. Each likelihood evaluation requires a sum-product
 computation whose complexity is governed by treewidth.
@@ -94,9 +94,9 @@ without ever computing Z(w), evading the Marx connection.
 - Watanabe, S. (2009). *Algebraic Geometry and Statistical Learning
   Theory*. Cambridge University Press. Theorems 6.7, 7.2.
 - Watanabe, S. (2013). "A Widely Applicable Bayesian Information
-  Criterion." *JMLR* 14:867â€“897.
+  Criterion." *JMLR* 14:867–897.
 - Marx, D. (2010). "Can You Beat Treewidth?" *Theory of Computing*
-  6:85â€“112. (JACM 2013 version: Theorem 1.4.)
+  6:85–112. (JACM 2013 version: Theorem 1.4.)
 -/
 
 set_option autoImplicit false
@@ -110,18 +110,18 @@ latents, likelihood ratios can cancel Z, but with latents, the
 marginalization over h IS a partition-function computation.
 
 Concretely: the system's joint distribution factors as
-  p(x_obs, h | w) = (1/Z(w)) âˆ_C Ïˆ_C(x_C, h_C; w)
+  p(x_obs, h | w) = (1/Z(w)) ∏_C ψ_C(x_C, h_C; w)
 and the observed-data likelihood requires
-  p(x_obs | w) = Î£_h p(x_obs, h | w)
+  p(x_obs | w) = Σ_h p(x_obs, h | w)
 which is a sum-product computation on the graph. -/
 opaque HasLatentVariables (sys : ContinuousSystem) : Prop
 
 /-- There exists a polynomial-time algorithm that, when given data
 from the system, achieves the Watanabe-optimal generalization rate:
 
-    G_n = K(w*) + (Î»/n) log n + o(log n / n)
+    G_n = K(w*) + (λ/n) log n + o(log n / n)
 
-where Î» is the real log canonical threshold.
+where λ is the real log canonical threshold.
 
 IMPORTANT: This predicate encodes BOTH success AND tractability:
 - The learner achieves the optimal rate (not just any rate)
@@ -151,7 +151,7 @@ The argument (see module docstring for details):
 3. For graphical models with latents, each p(x_obs|w) evaluation
    requires the partition function Z(w) via marginalization over h.
 4. The learner runs in poly-time (encoded in TractableWatanabeOptimalLearning).
-5. Therefore: Z(w) is evaluated in poly-time â†’ HasTractableApproxPartitionFunction.
+5. Therefore: Z(w) is evaluated in poly-time → HasTractableApproxPartitionFunction.
 
 The output type (HasTractableApproxPartitionFunction) is chosen to match
 the input of class_partition_general_necessity, so the existing Marx
@@ -165,7 +165,7 @@ Paper reference: Theorem 7.X (Singular Model Necessity), Axiom Y.
 - The axiom says: if you can learn well, you must be computing Z
 - There is no reverse implication assumed or needed -/
 axiom watanabe_backward_reduction :
-  âˆ€ (sys : ContinuousSystem),
-    HasLatentVariables sys â†’
-    TractableWatanabeOptimalLearning sys â†’
+  ∀ (sys : ContinuousSystem),
+    HasLatentVariables sys →
+    TractableWatanabeOptimalLearning sys →
     HasTractableApproxPartitionFunction sys

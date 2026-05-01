@@ -1,4 +1,4 @@
-﻿/-
+/-
 Copyright (c) 2026 Steven J. Jones. All rights reserved.
 Released under the MIT license as described in the file LICENSE.
 -/
@@ -34,7 +34,7 @@ definitions, the proved throughput bound, and the class-level predicates
 |------------------------------------|----------------------|
 | `separator_existence_from_treewidth` | Diestel (2017), Ch 12 |
 
-## Statistical characterization â€” per-instance (4 axioms)
+## Statistical characterization — per-instance (4 axioms)
 
 | Axiom            | Paper theorem | Source                         |
 |------------------|---------------|--------------------------------|
@@ -43,7 +43,7 @@ definitions, the proved throughput bound, and the class-level predicates
 | `watanabe_backward_reduction` | 7.X | Watanabe (2009), Thms 6.7+7.2 |
 | `comparative_revision_backward_reduction` | 7.Y | Posterior odds reduction |
 
-## Computational necessity â€” class-level (3 axioms)
+## Computational necessity — class-level (3 axioms)
 
 | Axiom                                | Paper theorem | Source                  |
 |--------------------------------------|---------------|-------------------------|
@@ -51,7 +51,7 @@ definitions, the proved throughput bound, and the class-level predicates
 | `class_partition_approx_necessity`   | 7.8(c)        | Kwisthout et al. (2010) |
 | `class_partition_general_necessity`  | 7.8(d)        | Marx (2010) direct      |
 
-Both require `ð“¢.RecursivelyEnumerable` so that the hardness reduction can
+Both require `𝓢.RecursivelyEnumerable` so that the hardness reduction can
 enumerate target instances at each graph size.
 
 ## Class-level predicates (in SystemClass.lean)
@@ -59,8 +59,8 @@ enumerate target instances at each graph size.
 | Predicate                   | Meaning                                        |
 |-----------------------------|------------------------------------------------|
 | `ContinuousSystemClass`     | `Set ContinuousSystem`                         |
-| `.RecursivelyEnumerable`    | opaque â€” the induced graph class is r.e.       |
-| `.HasBoundedTreewidth`      | `âˆƒ k, âˆ€ sys âˆˆ ð“¢, tw(G_eff) â‰¤ k` (uniform)    |
+| `.RecursivelyEnumerable`    | opaque — the induced graph class is r.e.       |
+| `.HasBoundedTreewidth`      | `∃ k, ∀ sys ∈ 𝓢, tw(G_eff) ≤ k` (uniform)    |
 | `.AllExactSufficiency`      | all members have exact sufficiency              |
 | `.AllIndependentSupport`    | all members have parameter-independent support  |
 | `.AllExponentialFamily`     | all members are exponential families            |

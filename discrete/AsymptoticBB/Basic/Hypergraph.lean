@@ -1,4 +1,4 @@
-﻿/-
+/-
 Copyright (c) 2026 Steven J. Jones. All rights reserved.
 Released under the MIT license as described in the file LICENSE.
 -/
@@ -21,17 +21,17 @@ E is a finite multiset of hyperedges, each being a non-empty subset of V.
 structure Hypergraph (V : Type*) where
   verts : Finset V
   edges : Multiset (Finset V)
-  edges_subset : âˆ€ e âˆˆ edges, e âŠ† verts
-  edges_nonempty : âˆ€ e âˆˆ edges, e.Nonempty
+  edges_subset : ∀ e ∈ edges, e ⊆ verts
+  edges_nonempty : ∀ e ∈ edges, e.Nonempty
 
 /-- A ranked alphabet is a finite set of symbols with a rank function.
 (Definition 2.2) -/
 structure RankedAlphabet where
   symbols : Type*
-  rank : symbols â†’ â„•
+  rank : symbols → ℕ
 
-/-- A hypergraph has bounded arity r if every hyperedge has cardinality â‰¤ r.
+/-- A hypergraph has bounded arity r if every hyperedge has cardinality ≤ r.
 The paper (Theorem 9.2) requires "bounded arity" as a precondition for
 Grohe's theorem. This is hypothesis (iv) of the main theorem (Theorem 12.1). -/
-def Hypergraph.BoundedArity {V : Type*} (H : Hypergraph V) (r : â„•) : Prop :=
-  âˆ€ e âˆˆ H.edges, e.card â‰¤ r
+def Hypergraph.BoundedArity {V : Type*} (H : Hypergraph V) (r : ℕ) : Prop :=
+  ∀ e ∈ H.edges, e.card ≤ r

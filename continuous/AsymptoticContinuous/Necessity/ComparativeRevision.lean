@@ -1,11 +1,11 @@
-﻿/-
+/-
 Copyright (c) 2026 Steven J. Jones. All rights reserved.
 Released under the MIT license as described in the file LICENSE.
 -/
 import AsymptoticContinuous.Agent.Defs
 
 /-!
-# Comparative Bayesian Revision â€” Fully Observed Singular Bridge
+# Comparative Bayesian Revision — Fully Observed Singular Bridge
 
 For singular models with no latent variables, likelihood-ratio methods can
 cancel the partition function, so the Watanabe latent-variable route does
@@ -24,7 +24,7 @@ For two hypotheses w and w0,
 
 Bayesian posterior odds update satisfies the same identity:
 
-    log Ï€(w|x) / Ï€(w0|x) - log Ï€(w) / Ï€(w0)
+    log π(w|x) / π(w0|x) - log π(w) / π(w0)
       = log p(x|w) / p(x|w0).
 
 Therefore, an oracle that tractably computes posterior log-odds updates for
@@ -46,7 +46,7 @@ Instead it requires:
   hypothesis pairs, in polynomial time
 - one anchor parameter with known/tractable partition value
 
-What remains outside scope: non-Bayesian or weakly Bayesian systems â€”
+What remains outside scope: non-Bayesian or weakly Bayesian systems —
 heuristic learners, discriminative predictors, local gradient methods
 without posterior-odds semantics.
 -/
@@ -56,7 +56,7 @@ set_option autoImplicit false
 /-- The system is fully observed: there are no hidden variables h to
 sum out in the likelihood. Concretely,
 
-  p(x | w) = (1 / Z(w)) âˆ_C Ïˆ_C(x_C; w).
+  p(x | w) = (1 / Z(w)) ∏_C ψ_C(x_C; w).
 
 This is the residual case not covered by the latent-variable Watanabe route.
 Likelihood ratios can cancel Z(w), so one needs a different bridge to recover
@@ -67,7 +67,7 @@ opaque IsFullyObservedModel (sys : ContinuousSystem) : Prop
 Bayesian belief revision over hypotheses: for arbitrary relevant parameter
 pairs w, w0 and observations x, it computes posterior log-odds updates
 
-  log Ï€(w | x) / Ï€(w0 | x) - log Ï€(w) / Ï€(w0)
+  log π(w | x) / π(w0 | x) - log π(w) / π(w0)
 
 to the accuracy needed by the downstream approximate-partition predicate.
 
@@ -104,8 +104,8 @@ This is a genuine black-box reduction covering fully observed singular
 models with purely parametric uncertainty, provided their belief revision
 is Bayesian enough to expose posterior-odds updates. -/
 axiom comparative_revision_backward_reduction :
-  âˆ€ (sys : ContinuousSystem),
-    IsFullyObservedModel sys â†’
-    TractableComparativeBayesRevision sys â†’
-    HasPartitionAnchor sys â†’
+  ∀ (sys : ContinuousSystem),
+    IsFullyObservedModel sys →
+    TractableComparativeBayesRevision sys →
+    HasPartitionAnchor sys →
     HasTractableApproxPartitionFunction sys
