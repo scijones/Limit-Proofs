@@ -248,47 +248,97 @@ def EmbodiedAgent.FullBehaviorLanguage {V : Type*} [DecidableEq V] [Fintype V]
 
 Under `tw(H) ≤ k`, the full behavior language of `A` is a `(k+1)`-MCFL.
 
-Proof idea:
-  For finite `V` and finite domains `D v`, every word in
-  `A.FullBehaviorLanguage k Sym encode` is the flattened map of a
-  `Nodup` permutation of `V` (via `IsTreeCompatibleOrdering`'s
-  specification) under a total assignment `β : ∀ v, D v`. Both the
-  assignment space `∀ v, D v` and the set of `Nodup` lists over `V`
-  are finite (the latter by `fintypeNodupList`), so the language is a
-  subset of the range of a function out of a finite type, hence finite.
-  Apply `finite_language_is_mcfl` at dimension `k+1 ≥ 1`.
+Proof: We follow the paper's argument exactly.
 
-The paper proves this at `thm:full-bound` by the same argument plus the
-observation that each per-decomposition language is a `(k+1)`-MCFL by
-`bridge_theorem_forall`; since our Lean route goes through the finite
-closure axiom we do not need the per-decomposition step, but the paper
-statement and this Lean statement agree. -/
+  (1) For each width-`≤k` rooted tree decomposition `(td, r)` of
+      `A.constraintHypergraph`, `bridge_theorem_forall` (via
+      `behavior_grammar_exists`) constructs an explicit `(k+1)`-MCFG
+      whose language is `TreeBehaviorLanguage A td r Sym encode`.
+  (2) The set `S` of *distinct* per-decomposition languages is finite,
+      because every such language is a subset of the range of the
+      action-projection map `f : (∀ v, D v) × {l : List V // l.Nodup} →
+      List Sym`, the range of `f` is finite, and the powerset of a
+      finite set is finite.
+  (3) `FullBehaviorLanguage A k Sym encode = ⋃_{L ∈ S} L`, so
+      `mcfg_finite_union` produces a single `(k+1)`-MCFG generating it.
+
+The route via `finite_language_is_mcfl` would have been a one-line
+shortcut (the language is finite, so it is trivially a `(k+1)`-MCFL),
+but it would have left `bridge_theorem_forall` off the proof's critical
+path. Routing through the bridge makes the constructive content
+(Engelfriet's grammar + homomorphism + finite union over satisfying
+assignments) load-bearing in this headline theorem, even though the
+finite ambient set is also what makes step (2) work. -/
 theorem full_behavior_bound {V : Type*} [DecidableEq V] [Fintype V]
     {D : V → Type*} [∀ v, DecidableEq (D v)] [∀ v, Fintype (D v)]
     (A : EmbodiedAgent V D) (k : ℕ)
     (_htw : A.constraintHypergraph.HasTreewidthAtMost k)
     (Sym : Type*) (encode : (v : V) → D v → Sym) :
     IsMCFL (A.FullBehaviorLanguage k Sym encode) (k + 1) := by
-  -- Every word in the full behavior language is determined by a pair
-  -- `(β, perm)` with `β : ∀ v, D v` (finitely many since `V` and each
-  -- `D v` are finite) and `perm : {l : List V // l.Nodup}` (finitely
-  -- many by `fintypeNodupList`). So the language is a subset of the
-  -- range of a map out of a finite type, hence finite. Apply
-  -- `finite_language_is_mcfl`.
+  classical
+  -- Action-projection map: every per-decomposition language is a
+  -- subset of `Set.range f`, which is finite.
   let f : (∀ v, D v) × {l : List V // l.Nodup} → List Sym :=
     fun p => (p.2.1.map (fun v =>
       if v ∈ A.action_vars then [encode v (p.1 v)] else [])).flatten
-  have hfin : (A.FullBehaviorLanguage k Sym encode).Finite := by
-    refine (Set.finite_range f).subset ?_
-    rintro w ⟨td, r, _hw, β, _hsat, perm, htco, rfl⟩
+  -- `S` collects the distinct per-decomposition languages.
+  let S : Set (Set (List Sym)) :=
+    { L | ∃ (td : TreeDecomposition A.constraintHypergraph) (r : td.I),
+            td.width ≤ k ∧ L = A.TreeBehaviorLanguage td r Sym encode }
+  -- `S ⊆ powerset (range f)`, hence finite.
+  have hS_finite : S.Finite := by
+    refine (Set.Finite.powerset (Set.finite_range f)).subset ?_
+    rintro L ⟨td, r, _hwidth, rfl⟩
+    intro w hw
+    obtain ⟨β, _hsat, perm, htco, rfl⟩ := hw
     exact ⟨(β, ⟨perm, (isTreeCompatibleOrdering_spec htco).2⟩), rfl⟩
-  exact finite_language_is_mcfl _ hfin (k + 1) (by omega)
+  -- Index the union by `↑Sf`, which is a `Fintype` subtype.
+  let Sf : Finset (Set (List Sym)) := hS_finite.toFinset
+  let Ls : Sf → Set (List Sym) := fun L => L.val
+  -- Each per-decomposition language is a `(k+1)`-MCFL by the bridge
+  -- theorem (i.e. the explicit construction in `behavior_grammar_exists`).
+  have hLs : ∀ L : Sf, ∃ G : MCFG.{_, 0} Sym,
+      G.dimension ≤ k + 1 ∧ G.Language = Ls L := by
+    rintro ⟨L, hL⟩
+    rw [Set.Finite.mem_toFinset] at hL
+    obtain ⟨td, r, hwidth, rfl⟩ := hL
+    show ∃ G : MCFG.{_, 0} Sym, G.dimension ≤ k + 1 ∧
+      G.Language = A.TreeBehaviorLanguage td r Sym encode
+    exact behavior_grammar_exists A td r k hwidth Sym encode
+  -- Finite union of `(k+1)`-MCFLs is a `(k+1)`-MCFL.
+  obtain ⟨G, hGdim, hGlang⟩ := @mcfg_finite_union.{_, _, 0, _} _ _ _ Ls (k + 1) hLs
+  refine ⟨G, hGdim, ?_⟩
+  rw [hGlang]
+  -- `⋃ L : ↑Sf, L.val = FullBehaviorLanguage A k Sym encode`.
+  ext w
+  simp only [Set.mem_iUnion, EmbodiedAgent.FullBehaviorLanguage,
+    Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨⟨L, hL⟩, hw⟩
+    rw [Set.Finite.mem_toFinset] at hL
+    obtain ⟨td, r, hwidth, rfl⟩ := hL
+    exact ⟨td, r, hwidth, hw⟩
+  · rintro ⟨td, r, hwidth, hw⟩
+    refine ⟨⟨A.TreeBehaviorLanguage td r Sym encode, ?_⟩, hw⟩
+    rw [Set.Finite.mem_toFinset]
+    exact ⟨td, r, hwidth, rfl⟩
 
 /-- **Main theorem, full-behavior formulation** (paper Theorem `thm:main`).
 
 Under the standard hypotheses, there is a uniform `k` such that every
 agent's full behavior language is a `(k+1)`-MCFL — bounding every action
-sequence the agent can produce consistently with its beliefs. -/
+sequence the agent can produce consistently with its beliefs.
+
+**Scope of this statement.** Per agent, `V` and the domains `D v` are
+finite, so the per-agent full behavior language is a finite set of
+strings. The substantive content of the theorem therefore lives in the
+*proof* (which exhibits an explicit `(k+1)`-MCFG via `bridge_theorem`)
+and in the *uniformity* of `k` across the entire RE class `𝓐` (which
+comes from Grohe). The non-trivial set-level statement is
+`main_theorem_finite_subclass`, which says the union of behavior
+languages over any finite sub-class of `𝓐` lives in the same `(k+1)`-MCFL
+class with the same uniform `k`. See repository `STATUS.md` for the full
+discussion of headline framing. -/
 theorem main_theorem_full
     (h_conj : FPT_ne_W1)
     (𝓐 : SizedEmbodiedAgentClass)
