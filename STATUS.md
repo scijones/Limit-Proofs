@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: April 20, 2026
+Last updated: June 4, 2026
 
 ## Discrete Case — Submission-Ready
 
@@ -17,7 +17,7 @@ rather than a single decomposition's language.
 
 | File | Role |
 |------|------|
-| `Axioms.lean` | Cited theorems (Grohe, Engelfriet) and MCFL closure axioms (`mcfg_homomorphic_image`, `mcfg_finite_union`, `finite_language_is_mcfl`) |
+| `Axioms.lean` | Cited theorems (Grohe, Engelfriet) and MCFL closure axioms (`mcfg_homomorphic_image`, `mcfg_finite_union`; `finite_language_is_mcfl` is declared but not used by the headline full-behavior proof) |
 | `Bridge.lean` | Bridge theorem: bounded treewidth ⟹ per-decomposition behavior language is `(k+1)`-MCFL |
 | `Main.lean` | `full_behavior_bound` / `main_theorem_full` (paper `thm:full-bound`, `thm:main`); `main_theorem_finite_subclass` (paper `thm:main-finite`); legacy `main_theorem` retained |
 | `Basic/`, `Agent/`, `Grammars/`, `TreeDecomposition/` | Supporting definitions and lemmas |
@@ -28,15 +28,16 @@ rather than a single decomposition's language.
 - `IsTreeCompatibleOrdering`, `isTreeCompatibleOrdering_spec`, `isTreeCompatibleOrdering_nonempty` — the tree-compatible-ordering predicate of the Engelfriet construction and its basic coherence + nonemptiness.
 - `engelfriet_tw_to_mcfl` — Engelfriet 1997 / Habel 1992: width-≤k tree decomposition ⟹ `(k+1)`-MCFG generating exactly the tree-compatible orderings.
 - `mcfg_homomorphic_image`, `mcfg_finite_union` — standard MCFL closure under homomorphic image and finite union (Seki et al. 1991).
-- `finite_language_is_mcfl` — finite languages are `d`-MCFL for every `d ≥ 1` (Seki et al. 1991, Thm 3.9 + dimension monotonicity).
+- `finite_language_is_mcfl` — finite languages are `d`-MCFL for every `d ≥ 1` (Seki et al. 1991, Thm 3.9 + dimension monotonicity); currently declared but not used by `full_behavior_bound` / `main_theorem_full`.
 
 **Proof chain for `thm:main` / `thm:full-bound` (full behavior):**
 1. `FPT ≠ W[1]` + RE class + uniform tractable revision + bounded arity ⟹ bounded treewidth of cores (`class_tractable_implies_bounded_tw` via Grohe).
 2. Standing core convention (WLOG) collapses core treewidth to original treewidth.
-3. For finite `V` and finite domains, every word in `B_k(𝔄)` is the flattened projection of a `Nodup` permutation of `V` under a total assignment `β`; the joint space is finite via `fintypeNodupList`, so `B_k(𝔄)` is finite.
-4. Finite-language MCFL closure (`finite_language_is_mcfl`) at dimension `k+1` gives `IsMCFL (B_k(𝔄)) (k+1)`.
+3. For each width-`≤k` rooted tree decomposition `(td, r)`, `behavior_grammar_exists` constructs an explicit `(k+1)`-MCFG for `TreeBehaviorLanguage A td r` using Engelfriet's ordering grammar, homomorphic action-variable projection, and finite union over satisfying assignments.
+4. `full_behavior_bound` collects the distinct per-decomposition languages into a finite set `S` and applies `mcfg_finite_union`, yielding one `(k+1)`-MCFG for `FullBehaviorLanguage A k`.
+5. Thus the headline full-behavior theorem routes through the bridge construction, not through the trivial finite-language shortcut.
 
-**Proof chain for `thm:main-finite` (finite sub-class, legacy path):**
+**Proof chain for `thm:main-finite` (finite sub-class):**
 Uses `bridge_theorem` + `mcfg_finite_union` over `F`; does not depend on `finite_language_is_mcfl`.
 
 **Build status:** `lake build` is green; no `sorry` in the load-bearing chain.
