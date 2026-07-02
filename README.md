@@ -30,3 +30,6 @@ The `cd discrete` step is required — Lake resolves the toolchain and manifest 
 
 MIT — see `LICENSE`.
 
+## Continuous work
+
+`continuous/AsymptoticContinuous/` contains preliminary Lean work toward a continuous information-throughput generalization. This development proves the compositional throughput theorem from explicit assumptions and records the external statistical, information-theoretic, and complexity-theoretic results as named axioms. See `continuous/continuous_case.pdf` and the axiom inventory in `continuous/AsymptoticContinuous/Axioms.lean`.
