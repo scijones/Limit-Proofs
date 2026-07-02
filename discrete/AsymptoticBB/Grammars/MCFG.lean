@@ -37,6 +37,12 @@ structure MCFGProduction (Sym : Type*) (N : Type*) (ar : N → ℕ) where
       RHS nonterminal. -/
   rhs_arities : ∀ (i : Fin rhs.length),
     (rhs_vars.get (i.cast rhs_len.symm)).length = ar (rhs.get i)
+  /-- Every variable index referenced on the LHS must be declared on the RHS.
+      Without this, the derivation rule's η could smuggle string material
+      through indices unbound to any subderivation, decoupling grammar
+      dimension from the tree-decomposition width the bound relies on. -/
+  lhs_indices_bounded : ∀ s ∈ lhs_strings, ∀ x : ℕ, (Sum.inr x : Sym ⊕ ℕ) ∈ s →
+    x ∈ rhs_vars.flatten
 
 /-- A multiple context-free grammar.
 (Definition 6.1) -/

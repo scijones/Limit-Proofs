@@ -38,7 +38,13 @@ universe u v
 /-! ## Complexity-theoretic hypothesis -/
 
 /-- FPT ≠ W[1]: the parameterized analogue of P ≠ NP.
-(Definitions 8.1–8.2, Remark 8.3) -/
+(Definitions 8.1–8.2, Remark 8.3)
+
+TRUST-BASE GUARD: this must remain an *uninterpreted* `Prop` used only
+as a hypothesis. Do NOT add an axiom asserting it holds (e.g.
+`axiom fpt_ne_w1_holds : FPT_ne_W1`). The consistency of `thm_grohe`
+against adversarial interpretations of the opaque class predicates
+depends on its conclusion staying guarded behind this hypothesis. -/
 axiom FPT_ne_W1 : Prop
 
 /-! ## Grohe's Theorem -/
@@ -177,32 +183,22 @@ axiom mcfg_finite_union {Sym : Type*} {ι : Type*} [Fintype ι]
     (h : ∀ i, ∃ G : MCFG Sym, G.dimension ≤ d ∧ G.Language = Ls i) :
     ∃ G : MCFG Sym, G.dimension ≤ d ∧ G.Language = ⋃ i, Ls i
 
-/-- **Finite languages are MCFLs at every positive dimension.**
+/-! ### Non-vacuity of the dimension bound (trust-base note)
 
-A standard closure property of multiple context-free languages: every
-finite language `L ⊆ Σ*` is a `d`-MCFL for every `d ≥ 1`. This follows
-because a finite language is context-free (list its elements as
-productions from the start symbol), and context-free = 1-MCFL ⊆ d-MCFL
-for `d ≥ 1`. See e.g. Seki et al. (1991), Theorem 3.9 and the
-dimension-monotonicity remark in Section 3.
+An axiom `finite_language_is_mcfl : L.Finite → 1 ≤ d → IsMCFL L d`
+previously lived here. It was UNUSED by the proof chain, and it was a
+trivializing hazard: since every per-agent behavior language is finite,
+it let Lean discharge every headline conclusion `IsMCFL L (k+1)` — and,
+worse, the class-level statement `∃ k, ∀ F, …` — with the junk witness
+`k = 0`, bypassing Grohe and Engelfriet entirely. It has been DELETED.
 
-We axiomatize this directly; a full mechanization would introduce a
-trivial MCFG whose productions enumerate the finite language and invoke
-`MCFG.dimension_le_of_forall`.
+With it gone, the only routes to `IsMCFL` in this development are:
+- `engelfriet_tw_to_mcfl` (dimension tied to tree-decomposition width),
+- `mcfg_homomorphic_image` / `mcfg_finite_union` (dimension-preserving),
+- explicit grammar constructions (e.g. `MCFG.empty`, whose language is
+  empty and is excluded by the non-vacuity guards in `Tests/Sanity.lean`).
 
-NOTE (alternative route considered): instead of adding this axiom, one
-could discharge `full_behavior_bound` using only `mcfg_finite_union` by
-constructing the finite image of decompositions explicitly. In the paper
-this is the one-line observation "only finitely many distinct
-languages"; in Lean, to hand `mcfg_finite_union` a `Fintype` index, you
-would take `Set.range (fun (td, r) ↦ A.TreeBehaviorLanguage td r …)`,
-show it is finite because it sits inside the finite powerset of
-`Σ^{≤|V|}`, convert that `Set.Finite` to a `Finset`, and then re-express
-`FullBehaviorLanguage` as `⋃ L ∈ thisFinset, L` via a `Set.biUnion`
-rewrite. That route is not hard but is not "a few lines" either — it is
-genuine `Set.Finite` ↔ `Finset` plumbing plus a `Set.biUnion` unfold.
-The axiom below collapses that bookkeeping into a single standard
-closure fact. -/
-axiom finite_language_is_mcfl {Sym : Type*}
-    (L : Set (List Sym)) (hfin : L.Finite) (d : ℕ) (hd : 1 ≤ d) :
-    IsMCFL L d
+Hence any proof of the class-level bound with uniform `k` must derive
+`k` from treewidth. Do NOT reintroduce a finite-language axiom at
+dimension `d > 1`; if one is ever needed, state it at `d = 1` only, so
+it cannot absorb the `k`-dependence of headline conclusions. -/

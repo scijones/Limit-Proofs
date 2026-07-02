@@ -224,13 +224,24 @@ theorem main_theorem_finite_subclass
 
 The full behavior language of `A` at width bound `k`: the union of
 tree-structured behavior languages over every width-`≤k` rooted tree
-decomposition of `A`'s constraint hypergraph. Under the policy-as-CSP
-reading of the paper (Remark `rem:policy`), every action sequence the
-agent can produce self-consistently is the action-variable projection
-of some `β ∈ Sol(P)` along a tree-compatible ordering of `V`; when
-`tw(H) ≤ k`, every such ordering is tree-compatible for some width-`≤k`
-decomposition. Hence `FullBehaviorLanguage A k` captures every action
-sequence `A` can produce consistently with its beliefs.
+decomposition of `A`'s constraint hypergraph.
+
+SEMANTICS (emittable = schedulable). Under the policy-as-CSP reading of
+the paper (Remark `rem:policy`), a behavior of `A` is an action sequence
+that `A`'s own execution machinery can schedule. That machinery is the
+same tractable belief-revision process whose tractability forces
+`tw(H) ≤ k` (Grohe); its executions walk a width-`≤k` tree decomposition,
+so the orderings it can realize are exactly the tree-compatible orderings
+of some width-`≤k` rooted decomposition. `FullBehaviorLanguage A k` is
+therefore the set of ALL behaviors emittable by `A` — not a subset of
+some larger behavior set. Vertex orderings that are tree-compatible for
+no width-`≤k` decomposition are not uncounted behaviors: they are strings
+no tractable execution of this CSP can schedule, i.e. the bound is causal
+(the same treewidth that makes revision tractable constrains emission
+order), not merely descriptive. Multi-cycle histories are concatenations
+/ Kleene star of per-cycle emissions, and both operations preserve MCFL
+dimension (Seki et al. 1991), so the `(k+1)` bound extends to iterated,
+self-correcting execution.
 -/
 
 /-- The **full behavior language** of an embodied agent at width bound `k`:
@@ -262,13 +273,14 @@ Proof: We follow the paper's argument exactly.
   (3) `FullBehaviorLanguage A k Sym encode = ⋃_{L ∈ S} L`, so
       `mcfg_finite_union` produces a single `(k+1)`-MCFG generating it.
 
-The route via `finite_language_is_mcfl` would have been a one-line
-shortcut (the language is finite, so it is trivially a `(k+1)`-MCFL),
-but it would have left `bridge_theorem_forall` off the proof's critical
-path. Routing through the bridge makes the constructive content
-(Engelfriet's grammar + homomorphism + finite union over satisfying
-assignments) load-bearing in this headline theorem, even though the
-finite ambient set is also what makes step (2) work. -/
+A finite-language shortcut axiom (`finite_language_is_mcfl`) was
+formerly available and would have made this a one-line proof — and made
+the class-level uniform-`k` statement vacuously true with `k = 0`. That
+axiom has been deleted from the trust base, so routing through the
+bridge is now the ONLY way to obtain this conclusion: the constructive
+content (Engelfriet's grammar + homomorphism + finite union over
+satisfying assignments) is load-bearing, and the uniform `k` in the
+class-level theorems genuinely derives from treewidth via Grohe. -/
 theorem full_behavior_bound {V : Type*} [DecidableEq V] [Fintype V]
     {D : V → Type*} [∀ v, DecidableEq (D v)] [∀ v, Fintype (D v)]
     (A : EmbodiedAgent V D) (k : ℕ)
