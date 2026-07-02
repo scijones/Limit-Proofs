@@ -186,33 +186,13 @@ theorem class_main_comparative (h_eth : ETH)
   -- Step 3: Per-instance throughput bound for each member
   exact ⟨k, fun sys hs => ⟨hk sys hs, throughput_rate_bound sys k (hk sys hs)⟩⟩
 
-/-! ## Per-instance corollaries (trivially follow from class-level) -/
+/-! ## Per-instance corollaries: DELETED
 
-/-- Per-instance Corollary 7.9(a). Uses the per-instance necessity axiom
-directly, bypassing the class-level version (and its r.e. requirement).
-Requires `HasIndependentSupport`.
-This conclusion is vacuously satisfiable with k = N−1. -/
-theorem main_exact_instance (h_conj : FPT_ne_SharpW1)
-    (sys : ContinuousSystem) (h_exact : HasExactSufficiency sys)
-    (h_supp : HasIndependentSupport sys)
-    (h_tract : HasTractablePartitionFunction sys) :
-    ∃ k : ℕ, sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
-  obtain ⟨k, hk⟩ := partition_exact_necessity_instance h_conj sys
-    (pkd_theorem sys h_exact h_supp) h_tract
-  exact ⟨k, hk, throughput_rate_bound sys k hk⟩
-
-/-- Per-instance Corollary 7.9(b). Same caveat as above.
-Uses decomposed non-degeneracy conditions: `FisherPositiveDefinite`,
-`DifferentiableInQuadraticMean`, `PriorConsistent`. -/
-theorem main_approx_instance (h_eth : ETH)
-    (sys : ContinuousSystem)
-    (h_fisher : FisherPositiveDefinite sys)
-    (h_dqm : DifferentiableInQuadraticMean sys)
-    (h_prior : PriorConsistent sys)
-    (h_tract : HasTractableApproxPartitionFunction sys) :
-    ∃ k : ℕ, sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
-  obtain ⟨k, hk⟩ := partition_approx_necessity_instance h_eth sys
-    (bvm_theorem sys h_fisher h_dqm h_prior) h_tract
-  exact ⟨k, hk, throughput_rate_bound sys k hk⟩
+Earlier revisions included `main_exact_instance` and
+`main_approx_instance`, proved from the per-instance necessity axioms.
+Both the axioms and the corollaries were vacuous: `∃ k, tw ≤ k` holds
+for every finite graph with k = N − 1 (constructively — see
+`Tests/Sanity.lean`), so the statements carried no structural content
+and the axioms were an unnecessary trust-base surface.  The
+load-bearing results are the class-level corollaries above, where the
+uniformity of k across the class is the non-trivial claim. -/

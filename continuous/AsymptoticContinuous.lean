@@ -1,1 +1,2 @@
 import AsymptoticContinuous.Main
+import AsymptoticContinuous.Tests.Sanity

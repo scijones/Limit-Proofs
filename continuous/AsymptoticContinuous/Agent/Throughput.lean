@@ -35,8 +35,6 @@ theorem throughput_rate_bound (sys : ContinuousSystem) (k : ℕ)
       = I(sys.obs ; sys.action | sys.state) := rfl
     _ ≤ I(sys.obs ; sys.coordsRV C | sys.state) :=
         data_processing_inequality sys.obs (sys.coordsRV C) sys.action sys.state hmc
-    _ ≤ ConditionalEntropy (sys.coordsRV C) sys.state :=
-        mi_le_conditional_entropy sys.obs (sys.coordsRV C) sys.state
     _ ≤ C.sum sys.R := sys.rate_bound C
     _ ≤ ↑C.card * sys.R_max := by
         have h1 : C.sum sys.R ≤ C.card • sys.R_max :=

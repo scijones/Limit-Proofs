@@ -30,10 +30,14 @@ Three variants:
 
 set_option autoImplicit false
 
-/-- FPT ≠ #W[1]. -/
+/-- FPT ≠ #W[1].  GUARD: uninterpreted hypothesis token — never assert
+this proposition (or its negation) anywhere in the development.  It is
+consumed only as an antecedent of the class-level necessity axioms. -/
 axiom FPT_ne_SharpW1 : Prop
 
-/-- ETH. -/
+/-- ETH.  GUARD: uninterpreted hypothesis token — never assert this
+proposition (or its negation) anywhere in the development.  It is
+consumed only as an antecedent of the class-level necessity axioms. -/
 axiom ETH : Prop
 
 -- HasTractablePartitionFunction and HasTractableApproxPartitionFunction
@@ -100,19 +104,16 @@ axiom class_partition_general_necessity :
     𝓢.AllTractableApproxPartition →
     𝓢.HasBoundedTreewidth
 
-/-! ## PER-INSTANCE VERSIONS (retained for composition, known to be vacuous) -/
+/-! ## Per-instance versions: DELETED
 
-/-- Per-instance exact necessity. VACUOUS: ∃ k is always satisfiable with k = N−1.
-Retained for documentation only. The per-instance conclusion is trivially
-satisfiable and does not require the r.e. hypothesis that the class-level
-version needs. -/
-axiom partition_exact_necessity_instance (h : FPT_ne_SharpW1)
-    (sys : ContinuousSystem) (hexp : IsExponentialFamily sys)
-    (htract : HasTractablePartitionFunction sys) :
-    ∃ k : ℕ, sys.G_eff.HasTreewidthAtMost k
-
-/-- Per-instance approximate necessity. VACUOUS for the same reason. -/
-axiom partition_approx_necessity_instance (h : ETH)
-    (sys : ContinuousSystem) (hexp : IsAsymptoticExpFamily sys)
-    (htract : HasTractableApproxPartitionFunction sys) :
-    ∃ k : ℕ, sys.G_eff.HasTreewidthAtMost k
+Earlier revisions declared per-instance necessity axioms
+(`partition_exact_necessity_instance`, `partition_approx_necessity_instance`)
+concluding `∃ k, tw(G_eff) ≤ k` for a single system.  That conclusion
+is vacuous (k = N − 1 always works, via the one-bag decomposition —
+see `Tests/Sanity.lean` for the constructive proof), and keeping the
+axioms invited proof-chain pollution: a downstream proof could extract
+a k that scales with N, silently breaking the uniform throughput
+limit.  They have been removed from the trust base entirely, along
+with the per-instance corollaries in `Main.lean` that consumed them.
+All necessity content is class-level, where the uniform k is the
+non-trivial claim. -/

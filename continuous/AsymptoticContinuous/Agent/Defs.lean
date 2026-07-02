@@ -52,9 +52,20 @@ structure ContinuousSystem where
     ∀ (C : Finset (Fin N)),
       G_eff.IsSeparatingSet V_O V_A C →
       IsMarkovChain obs (coordsRV C) action state
+  /-- Per-coordinate rate constraint, in capacity (mutual-information)
+  form: the coordinates in `C` jointly convey at most `Σ_{i∈C} R i`
+  units of information about the observation given the state.
+
+  Deliberately NOT the entropy form `H(coordsRV C | state) ≤ Σ R`:
+  differential entropy can be negative, and the bridging inequality
+  `I ≤ H` is false for continuous variables, so the entropy form is
+  sound only in a discrete model.  The MI form is the correct
+  continuous statement (each coordinate is a channel of capacity
+  `R i`), is non-negative-safe, and is also a weaker hypothesis —
+  making every theorem proved from it stronger. -/
   rate_bound :
     ∀ (C : Finset (Fin N)),
-      ConditionalEntropy (coordsRV C) state ≤ C.sum R
+      I(obs ; coordsRV C | state) ≤ C.sum R
 
 noncomputable def ContinuousSystem.throughput (sys : ContinuousSystem) : ℝ :=
   I(sys.obs ; sys.action | sys.state)

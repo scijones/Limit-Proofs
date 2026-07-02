@@ -20,13 +20,21 @@ definitions, the proved throughput bound, and the class-level predicates
 | `FPT_ne_SharpW1`  | Flum & Grohe (2006)             |
 | `ETH`             | Impagliazzo & Paturi (2001)     |
 
-## Information theory (3)
+## Information theory (2 load-bearing + 3 witness-only)
 
 | Axiom                          | Source                         |
 |--------------------------------|--------------------------------|
-| `data_processing_inequality`   | Cover & Thomas (1991), Thm 2.8.1 |
-| `mi_le_conditional_entropy`    | Cover & Thomas (1991)          |
-| `subadditivity_entropy`        | Cover & Thomas (1991), Thm 2.6.5 |
+| `IsMarkovChain` (predicate)    | interface token (global Markov property) |
+| `data_processing_inequality`   | Polyanskiy & Wu (2024), Ch. 3 — valid for continuous RVs |
+| `witnessRV` (sanity only)      | any probability space has a RV |
+| `isMarkovChain_self_right` (sanity only) | X—Y—Y is always Markov |
+| `cmi_cond_self` (sanity only)  | I(X;Y|Y) = 0                   |
+
+DELETED (false for differential entropy, sound only in a discrete
+model): `mi_le_conditional_entropy`, `subadditivity_entropy`.  The
+rate constraint is now stated in capacity (MI) form directly in
+`ContinuousSystem.rate_bound`, so the remaining information-theoretic
+trust base is valid for genuinely continuous random variables.
 
 ## Graph theory (1)
 
@@ -53,6 +61,12 @@ definitions, the proved throughput bound, and the class-level predicates
 
 Both require `𝓢.RecursivelyEnumerable` so that the hardness reduction can
 enumerate target instances at each graph size.
+
+DELETED (vacuous — ∃ k is satisfiable with k = N−1 via the one-bag
+decomposition, proved constructively in `Tests/Sanity.lean`):
+`partition_exact_necessity_instance`, `partition_approx_necessity_instance`,
+and the per-instance corollaries `main_exact_instance`,
+`main_approx_instance` that consumed them.
 
 ## Class-level predicates (in SystemClass.lean)
 
@@ -81,6 +95,7 @@ enumerate target instances at each graph size.
 | Theorem                    | Paper theorem | Module              |
 |----------------------------|---------------|---------------------|
 | `throughput_rate_bound`    | 7.1           | Agent.Throughput    |
-
-**Total: 15 axioms, 10 tractability/r.e./opaque predicates, 18 class predicates, 1 proved theorem.**
+| `trivial_graph_tw0`        | non-vacuity   | Tests.Sanity        |
+| `continuousSystem_nonempty`| non-vacuity   | Tests.Sanity        |
+| `throughput_rate_bound_nonvacuous` | non-vacuity | Tests.Sanity  |
 -/
