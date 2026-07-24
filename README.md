@@ -2,6 +2,8 @@
 
 This repository accompanies the paper *Automaton Equivalence for Tractable Belief-Driven Systems*.
 
+> **Discrete-case revision in progress.** The [`discrete-case-repair`](https://github.com/scijones/Limit-Proofs/tree/discrete-case-repair) branch is shoring up flaws in the original discrete-case argument and formalization. That work is still in progress and should not yet be treated as a finished replacement.
+
 Assuming FPT ≠ W[1]: any recursively enumerable class of embodied systems supporting uniform tractable belief revision over arbitrary constraint relations with bounded arity has bounded-treewidth constraint structure; consequently, the set of all action sequences any such system can produce consistently with its beliefs forms a (k+1)-MCFL, where k is the uniform treewidth bound for the class.
 
 ## Lean formalization
