@@ -188,6 +188,10 @@ def EmbodiedAgent.TreeBehaviorLanguage [Fintype V]
           w = (perm.map (fun v =>
             if v ∈ A.action_vars then [encode v (β v)] else [])).flatten }
 
+/-
+Historical refinement-based formulation (superseded by the existential
+homomorphic-image/finite-union proof below):
+
 theorem behavior_grammar_exists
     (A : EmbodiedAgent V D)
     (td : TreeDecomposition A.constraintHypergraph)
@@ -199,43 +203,71 @@ theorem behavior_grammar_exists
       G_beh.Language = A.TreeBehaviorLanguage td r Sym encode := by
   -- Step 1: Ordering grammar from Engelfriet (Theorems 5.8 + 5.9)
   obtain ⟨S_ord, hdim⟩ := @engelfriet_tw_to_mcfl.{_, 0} V _ _ A.constraintHypergraph td r k hk
-  -- Step 2: Encoding homomorphism — action vars encoded, non-action deleted
-  let h_β : (∀ v : V, D v) → V → List Sym := fun β v =>
-    if v ∈ A.action_vars then [encode v (β v)] else []
-  -- Step 3: Index homomorphic images by satisfying assignments
-  let ι := { β : ∀ v : V, D v // A.toCSP.IsSatisfying β }
-  haveI : Fintype ι := by
-    haveI : DecidablePred A.toCSP.IsSatisfying := Classical.decPred _
-    exact Subtype.fintype _
-  let L_β : ι → Set (List Sym) := fun ⟨β, _⟩ =>
-    { w | ∃ w' ∈ S_ord.grammar.Language, w = (w'.map (h_β β)).flatten }
-  -- Steps 4-5: Homomorphism closure + finite union → single (k+1)-MCFG
-  obtain ⟨G, hGdim, hGlang⟩ := @mcfg_finite_union.{_, _, 0, _} _ _ _ L_β (k + 1) (fun ⟨β, _⟩ =>
-    let ⟨G', hG'dim, hG'lang⟩ := @mcfg_homomorphic_image.{_, _, 0, 0} _ _ S_ord.grammar (h_β β)
-    ⟨G', le_trans hG'dim hdim, hG'lang⟩)
-  refine ⟨G, hGdim, ?_⟩
-  -- Step 6: ⋃_β h_β(L(S_ord)) = TreeBehaviorLanguage
-  -- This is now direct because lang_complete/lang_sound characterize
-  -- L(S_ord) = {tree-compatible orderings}, and TreeBehaviorLanguage
-  -- is defined using exactly tree-compatible orderings.
+  -- Step 2: synchronize assignment consistency and terminal encoding with
+  -- that specific ordering grammar.  This construction cannot be invoked
+  -- from finiteness of the output language.
+  obtain ⟨G, _href, hGdimBase, hGlang⟩ :=
+    structured_behavior_grammar A td r S_ord Sym encode
+  refine ⟨G, le_trans hGdimBase hdim, ?_⟩
   rw [hGlang]
   ext w
-  simp only [Set.mem_iUnion, EmbodiedAgent.TreeBehaviorLanguage, Set.mem_setOf_eq]
+  simp only [EmbodiedAgent.TreeBehaviorLanguage, Set.mem_setOf_eq]
   constructor
-  · -- Soundness: w ∈ ⋃_β h_β(L(S_ord)) → w ∈ TreeBehaviorLanguage
-    rintro ⟨⟨β, hβ_sat⟩, perm, hperm_lang, rfl⟩
+  · rintro ⟨β, hβ_sat, perm, hperm_lang, rfl⟩
     obtain ⟨_, _, hperm_compat⟩ := S_ord.lang_sound perm hperm_lang
     exact ⟨β, hβ_sat, perm, hperm_compat, rfl⟩
-  · -- Completeness: w ∈ TreeBehaviorLanguage → w ∈ ⋃_β h_β(L(S_ord))
-    rintro ⟨β, hβ_sat, perm, hperm_compat, rfl⟩
-    exact ⟨⟨β, hβ_sat⟩, perm,
+  · rintro ⟨β, hβ_sat, perm, hperm_compat, rfl⟩
+    exact ⟨β, hβ_sat, perm,
       S_ord.lang_complete perm hperm_compat, rfl⟩
+
+-/
+
+/-- Width-bounded ordering behavior is an MCFG language.  For each satisfying
+assignment, take the homomorphic image of the ordering grammar that emits the
+assignment's action symbols and erases non-actions.  The full behavior language
+is the finite union of these images.
+
+The conclusion is purely existential: no particular solution, derivation, or
+grammar implementation is required to be preserved by the stitching step. -/
+theorem behavior_grammar_exists
+    (A : EmbodiedAgent V D)
+    (td : TreeDecomposition A.constraintHypergraph)
+    (r : td.I)
+    (k : ℕ) (hk : td.width ≤ k)
+    (Sym : Type*) (encode : (v : V) → D v → Sym) :
+    ∃ (G_beh : MCFG.{_, 0} Sym),
+      G_beh.dimension ≤ k + 1 ∧
+      G_beh.Language = A.TreeBehaviorLanguage td r Sym encode := by
+  obtain ⟨S_ord, hdim⟩ :=
+    @engelfriet_tw_to_mcfl.{_, 0} V _ _ A.constraintHypergraph td r k hk
+  let Sol := { β : ∀ v : V, D v // A.toCSP.IsSatisfying β }
+  let projected : Sol → Set (List Sym) := fun β =>
+    {w | ∃ perm ∈ S_ord.grammar.Language,
+      w = (perm.map (fun v =>
+        if v ∈ A.action_vars then [encode v (β.1 v)] else [])).flatten}
+  have hprojected : ∀ β : Sol, IsMCFL.{_, 0} (projected β) (k + 1) := by
+    intro β
+    obtain ⟨Gβ, hGβdim, hGβlang⟩ := mcfg_homomorphic_image S_ord.grammar
+      (fun v => if v ∈ A.action_vars then [encode v (β.1 v)] else [])
+    exact ⟨Gβ, hGβdim.trans hdim, hGβlang⟩
+  have hunion : IsMCFL.{_, 0} (⋃ β : Sol, projected β) (k + 1) :=
+    mcfg_finite_union projected (k + 1) (Nat.le_add_left 1 k) hprojected
+  obtain ⟨G, hGdim, hGlang⟩ := hunion
+  refine ⟨G, hGdim, hGlang.trans ?_⟩
+  ext w
+  simp only [Set.mem_iUnion, projected, Set.mem_setOf_eq,
+    EmbodiedAgent.TreeBehaviorLanguage]
+  constructor
+  · rintro ⟨⟨β, hβsat⟩, perm, hperm, rfl⟩
+    exact ⟨β, hβsat, perm, (S_ord.lang_sound perm hperm).2.2, rfl⟩
+  · rintro ⟨β, hβsat, perm, hperm, rfl⟩
+    exact ⟨⟨β, hβsat⟩, perm, S_ord.lang_complete perm hperm, rfl⟩
 
 end BehaviorGrammar
 
 /-! ## The Bridge Theorem -/
 
-/-- **Theorem 11.3 (Bridge theorem, universal form).**
+/-! **Theorem 11.3 (Bridge theorem, universal form).**
 
 Let `A` be an embodied agent whose constraint hypergraph has `tw(H) ≤ k`.
 Then for **every** tree decomposition `td` of `A.constraintHypergraph` with
@@ -255,7 +287,7 @@ theorem bridge_theorem_forall {V : Type u} [DecidableEq V] [Fintype V]
     (Sym : Type*) (encode : (v : V) → D v → Sym)
     (td : TreeDecomposition A.constraintHypergraph) (r : td.I)
     (hwidth : td.width ≤ k) :
-    IsMCFL (A.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
+    IsMCFL.{_, 0} (A.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
   obtain ⟨G_beh, hdim, hlang⟩ := behavior_grammar_exists A td r k hwidth Sym encode
   exact ⟨G_beh, hdim, hlang⟩
 
@@ -272,7 +304,7 @@ theorem bridge_theorem {V : Type u} [DecidableEq V] [Fintype V]
     (Sym : Type*) (encode : (v : V) → D v → Sym)
     (htw : A.constraintHypergraph.HasTreewidthAtMost k) :
     ∃ (td : TreeDecomposition A.constraintHypergraph) (r : td.I),
-      IsMCFL (A.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
+      IsMCFL.{_, 0} (A.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
   obtain ⟨td, hwidth⟩ := htw
   obtain ⟨r⟩ := td.instNonemptyI
   exact ⟨td, r, bridge_theorem_forall A k Sym encode td r hwidth⟩

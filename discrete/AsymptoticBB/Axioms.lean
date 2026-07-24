@@ -6,7 +6,7 @@ import AsymptoticBB.Basic.CSP
 import AsymptoticBB.Basic.SizedInstances
 import AsymptoticBB.TreeDecomposition.Defs
 import AsymptoticBB.TreeDecomposition.Boundary
-import AsymptoticBB.Grammars.MCFG
+import AsymptoticBB.Grammars.Union
 import AsymptoticBB.Agent.Defs
 import AsymptoticBB.Agent.Tractability
 
@@ -26,9 +26,10 @@ This module declares the external results cited by the proof:
 - **`StructuredMCFG` / `engelfriet_tw_to_mcfl`**: Engelfriet's construction
   (1997) — given a tree decomposition of width ≤ k, produces a (k+1)-MCFG
   whose language is exactly the set of tree-compatible orderings.
-- **`mcfg_homomorphic_image`, `mcfg_finite_union`**: Standard MCFL closure
-  properties (homomorphic image preserves dimension; finite union preserves
-  dimension).
+- **`mcfg_homomorphic_image`**: A single homomorphic image preserves
+  dimension.
+- **`mcfg_finite_union`**: finitely many languages in the same MCFG tier can
+  be stitched by union without increasing the tier.
 -/
 
 set_option autoImplicit false
@@ -178,11 +179,6 @@ axiom mcfg_homomorphic_image {Sym₁ : Type*} {Sym₂ : Type*}
     ∃ G' : MCFG Sym₂, G'.dimension ≤ G.dimension ∧
       G'.Language = { w : List Sym₂ | ∃ w' ∈ G.Language, w = (w'.map h).flatten }
 
-axiom mcfg_finite_union {Sym : Type*} {ι : Type*} [Fintype ι]
-    (Ls : ι → Set (List Sym)) (d : ℕ)
-    (h : ∀ i, ∃ G : MCFG Sym, G.dimension ≤ d ∧ G.Language = Ls i) :
-    ∃ G : MCFG Sym, G.dimension ≤ d ∧ G.Language = ⋃ i, Ls i
-
 /-! ### Non-vacuity of the dimension bound (trust-base note)
 
 An axiom `finite_language_is_mcfl : L.Finite → 1 ≤ d → IsMCFL L d`
@@ -192,13 +188,14 @@ it let Lean discharge every headline conclusion `IsMCFL L (k+1)` — and,
 worse, the class-level statement `∃ k, ∀ F, …` — with the junk witness
 `k = 0`, bypassing Grohe and Engelfriet entirely. It has been DELETED.
 
-With it gone, the only routes to `IsMCFL` in this development are:
+The relevant routes to `IsMCFL` in this development are:
 - `engelfriet_tw_to_mcfl` (dimension tied to tree-decomposition width),
-- `mcfg_homomorphic_image` / `mcfg_finite_union` (dimension-preserving),
-- explicit grammar constructions (e.g. `MCFG.empty`, whose language is
-  empty and is excluded by the non-vacuity guards in `Tests/Sanity.lean`).
+- `mcfg_homomorphic_image` (a dimension-preserving image of one grammar),
+- `mcfg_finite_union` (existential stitching within a fixed tier), and
+- explicit grammar constructions such as `MCFG.empty`.
 
-Hence any proof of the class-level bound with uniform `k` must derive
-`k` from treewidth. Do NOT reintroduce a finite-language axiom at
-dimension `d > 1`; if one is ever needed, state it at `d = 1` only, so
-it cannot absorb the `k`-dependence of headline conclusions. -/
+The bridge below first derives one language for each satisfying assignment by
+homomorphic image of the width-bounded ordering grammar and then stitches those
+languages by finite union.  Thus finiteness is used for the intended meaning of
+combining finitely many behaviors; it does not choose the treewidth parameter,
+which remains the uniform bound supplied by the structural theorem. -/

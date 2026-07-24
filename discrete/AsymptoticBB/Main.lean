@@ -22,8 +22,9 @@ structural characterizations of agent behavior at the class level.
 - **`main_theorem`** (Theorem 12.1): Per-agent formulation — for every
   agent in the class, there exists a tree decomposition under which the
   behavior language is a (k+1)-MCFL, with k uniform across the class.
-- **`main_theorem_finite_subclass`** (Theorem 12.2): For any finite
-  sub-class, the union of behavior languages is a single (k+1)-MCFL.
+- **`main_theorem_finite_subclass`** and **`full_behavior_bound`** stitch
+  finitely many already width-bounded behavior languages without changing
+  their common MCFG tier.
 
 ## Type flow
 ```
@@ -33,8 +34,8 @@ structural characterizations of agent behavior at the class level.
   │
   ├── ∀ A ∈ 𝓐: bridge_theorem → ∃ td r, IsMCFL (L(A,td,r)) (k+1)
   │
-  └── ClassBehaviorLanguage(𝓐) = ⋃_{A ∈ 𝓐} L(A, td_A, r_A)
-      └── For finite F ⊆ 𝓐: IsMCFL (⋃_{A ∈ F} L(A)) (k+1)
+  └── finite behavior families are stitched by union at the same tier;
+      k is still the uniform treewidth bound supplied by Grohe
 ```
 -/
 
@@ -53,16 +54,9 @@ This language is potentially infinite when 𝓐 contains agents with
 unbounded vertex-set sizes (varying n). The uniform dimension bound k+1
 (from Grohe's theorem) is genuinely non-trivial for such classes.
 
-NOTE (unused by submission): this definition is retained as documentation
-of the class-level object discussed informally in the paper, but the
-paper's load-bearing class-level statement
-(`thm:main-finite`) operates on a *finite* sub-class whose union is
-itself a `(k+1)`-MCFL via `main_theorem_finite_subclass`, and the
-paper's strongest per-agent statement (`thm:full-bound`,
-`thm:main`) uses the full-behavior language `FullBehaviorLanguage`
-below. `ClassBehaviorLanguage` is not cited by any theorem conclusion
-currently in the paper and can be removed without affecting the proof
-chain. -/
+This definition records the class-level object discussed informally in the
+paper.  The active finite-subclass theorem applies finite union only after each
+member language has been placed in the common width-derived tier. -/
 def ClassBehaviorLanguage
     (𝓐 : SizedEmbodiedAgentClass)
     (Sym : Type*)
@@ -98,7 +92,7 @@ theorem class_tractable_implies_bounded_tw
 
 /-! ## Theorem 12.1: Main theorem — per-agent -/
 
-/-- Theorem 12.1 (Main theorem) — per-agent formulation.
+/-! Theorem 12.1 (Main theorem) — per-agent formulation.
 
 Assume FPT ≠ W[1]. For a class 𝓐 satisfying the standard hypotheses,
 there exists a uniform k such that for every A ∈ 𝓐, there exists a tree
@@ -117,7 +111,7 @@ theorem main_theorem
     (h_cores : 𝓐.AllCores)
     (Sym : Type*) (encode : (v : Fin A.n) → A.D v → Sym) :
     ∃ k, ∃ (td : TreeDecomposition A.agent.constraintHypergraph) (r : td.I),
-      IsMCFL (A.agent.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
+      IsMCFL.{_, 0} (A.agent.TreeBehaviorLanguage td r Sym encode) (k + 1) := by
   obtain ⟨k, hk⟩ := class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
   obtain ⟨td, r, hmcfl⟩ := bridge_theorem A.agent k Sym encode (hk A hA)
   exact ⟨k, td, r, hmcfl⟩
@@ -145,28 +139,52 @@ theorem main_theorem_forall
     ∃ k, ∀ (A : SizedEmbodiedAgent), A ∈ 𝓐 →
       ∀ (td : TreeDecomposition A.agent.constraintHypergraph) (r : td.I),
         td.width ≤ k →
-        IsMCFL (A.agent.TreeBehaviorLanguage td r Sym (encode A)) (k + 1) := by
+        IsMCFL.{_, 0} (A.agent.TreeBehaviorLanguage td r Sym (encode A)) (k + 1) := by
   obtain ⟨k, hk⟩ := class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
   refine ⟨k, ?_⟩
   intro A hA td r hwidth
   exact bridge_theorem_forall A.agent k Sym (encode A) td r hwidth
 
+/-- **Schedule-class formulation.** There is one structural bound `k` such
+that every class member has a width-`≤k` decomposition and every action
+schedule language induced by any such rooted decomposition belongs to the same
+`(k+1)`-MCFL class.
+
+This states existence and class membership only.  It neither constructs a
+scheduler nor asks the stitching argument to preserve a selected solution. -/
+theorem main_theorem_schedule_class
+    (h_conj : FPT_ne_W1)
+    (𝓐 : SizedEmbodiedAgentClass)
+    (h_re : 𝓐.RecursivelyEnumerable)
+    (h_tract : 𝓐.UniformTractableBelRevision)
+    (h_arity : 𝓐.BoundedArity)
+    (h_cores : 𝓐.AllCores)
+    (Sym : Type*)
+    (encode : (A : SizedEmbodiedAgent) → (v : Fin A.n) → A.D v → Sym) :
+    ∃ k,
+      (∀ A ∈ 𝓐, A.agent.constraintHypergraph.HasTreewidthAtMost k) ∧
+      ∀ (A : SizedEmbodiedAgent), A ∈ 𝓐 →
+        ∀ (td : TreeDecomposition A.agent.constraintHypergraph) (r : td.I),
+          td.width ≤ k →
+          IsMCFL.{_, 0}
+            (A.agent.TreeBehaviorLanguage td r Sym (encode A)) (k + 1) := by
+  obtain ⟨k, hk⟩ :=
+    class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
+  refine ⟨k, hk, ?_⟩
+  intro A hA td r hwidth
+  exact bridge_theorem_forall A.agent k Sym (encode A) td r hwidth
+
 /-! ## Theorem 12.2: Main theorem — finite sub-class -/
 
-/-- Theorem 12.2 (Main theorem — finite sub-class formulation).
+/-! Theorem 12.2 (Main theorem — finite sub-class formulation).
 
 For any FINITE subset F ⊆ 𝓐, the union of behavior languages
 ⋃_{A ∈ F} L(A, td_A, r_A) is a single (k+1)-MCFL.
 
-This is the strongest non-vacuous statement provable from the existing
-axiom `mcfg_finite_union`: the union of finitely many (k+1)-MCFLs is
-a (k+1)-MCFL, and the k is uniform across the entire class (independent
-of which finite subset F is chosen or how large it is).
-
-NON-TRIVIALITY: As |F| grows (sampling agents of larger and larger sizes),
-the union language grows without bound. The dimension bound k+1 remains
-fixed, showing that the constraint structure genuinely controls the
-formal-language complexity — not just per-agent, but uniformly. -/
+The union of finitely many `(k+1)`-MCFLs is a `(k+1)`-MCFL, and `k` is
+uniform across the entire class (independent of the chosen finite subset).
+This is an existence statement: stitching does not preserve or select a
+particular satisfying assignment or grammar witness. -/
 theorem main_theorem_finite_subclass
     (h_conj : FPT_ne_W1)
     (𝓐 : SizedEmbodiedAgentClass)
@@ -179,7 +197,7 @@ theorem main_theorem_finite_subclass
     ∃ k, ∀ (F : Finset SizedEmbodiedAgent), ↑F ⊆ 𝓐 →
       ∃ (td_choice : ∀ A ∈ F, TreeDecomposition A.agent.constraintHypergraph)
         (r_choice : ∀ (A : SizedEmbodiedAgent) (hA : A ∈ F), (td_choice A hA).I),
-        IsMCFL (⋃ (A : F),
+        IsMCFL.{_, 0} (⋃ (A : F),
           (A : SizedEmbodiedAgent).agent.TreeBehaviorLanguage
             (td_choice A A.prop) (r_choice A A.prop) Sym (encode A)) (k + 1) := by
   -- Get uniform treewidth bound
@@ -217,7 +235,8 @@ theorem main_theorem_finite_subclass
     intro ⟨A, hA⟩
     exact per_mcfg ⟨A, hA⟩
   -- Finite union of (k+1)-MCFLs is a (k+1)-MCFL
-  obtain ⟨G, hGdim, hGlang⟩ := @mcfg_finite_union.{_, _, 0, _} _ _ _ Ls (k + 1) hLs
+  obtain ⟨G, hGdim, hGlang⟩ :=
+    @mcfg_finite_union _ _ _ Ls (k + 1) (Nat.le_add_left 1 k) hLs
   exact ⟨G, hGdim, hGlang⟩
 
 /-! ## Full behavior bound
@@ -255,7 +274,7 @@ def EmbodiedAgent.FullBehaviorLanguage {V : Type*} [DecidableEq V] [Fintype V]
   { w | ∃ (td : TreeDecomposition A.constraintHypergraph) (r : td.I),
           td.width ≤ k ∧ w ∈ A.TreeBehaviorLanguage td r Sym encode }
 
-/-- **Full behavior bound** (paper Theorem `thm:full-bound`).
+/-! **Full behavior bound** (paper Theorem `thm:full-bound`).
 
 Under `tw(H) ≤ k`, the full behavior language of `A` is a `(k+1)`-MCFL.
 
@@ -273,20 +292,17 @@ Proof: We follow the paper's argument exactly.
   (3) `FullBehaviorLanguage A k Sym encode = ⋃_{L ∈ S} L`, so
       `mcfg_finite_union` produces a single `(k+1)`-MCFG generating it.
 
-A finite-language shortcut axiom (`finite_language_is_mcfl`) was
-formerly available and would have made this a one-line proof — and made
-the class-level uniform-`k` statement vacuously true with `k = 0`. That
-axiom has been deleted from the trust base, so routing through the
-bridge is now the ONLY way to obtain this conclusion: the constructive
-content (Engelfriet's grammar + homomorphism + finite union over
-satisfying assignments) is load-bearing, and the uniform `k` in the
-class-level theorems genuinely derives from treewidth via Grohe. -/
+A stronger finite-language shortcut axiom (`finite_language_is_mcfl`) is
+not assumed.  Here finite union expresses only that finitely many schedule
+languages already known to occupy the same tier can be stitched into one
+existential language witness.  In the class-level theorem, the value of `k`
+is fixed first by the uniform treewidth conclusion. -/
 theorem full_behavior_bound {V : Type*} [DecidableEq V] [Fintype V]
     {D : V → Type*} [∀ v, DecidableEq (D v)] [∀ v, Fintype (D v)]
     (A : EmbodiedAgent V D) (k : ℕ)
     (_htw : A.constraintHypergraph.HasTreewidthAtMost k)
     (Sym : Type*) (encode : (v : V) → D v → Sym) :
-    IsMCFL (A.FullBehaviorLanguage k Sym encode) (k + 1) := by
+    IsMCFL.{_, 0} (A.FullBehaviorLanguage k Sym encode) (k + 1) := by
   classical
   -- Action-projection map: every per-decomposition language is a
   -- subset of `Set.range f`, which is finite.
@@ -318,7 +334,8 @@ theorem full_behavior_bound {V : Type*} [DecidableEq V] [Fintype V]
       G.Language = A.TreeBehaviorLanguage td r Sym encode
     exact behavior_grammar_exists A td r k hwidth Sym encode
   -- Finite union of `(k+1)`-MCFLs is a `(k+1)`-MCFL.
-  obtain ⟨G, hGdim, hGlang⟩ := @mcfg_finite_union.{_, _, 0, _} _ _ _ Ls (k + 1) hLs
+  obtain ⟨G, hGdim, hGlang⟩ :=
+    @mcfg_finite_union _ _ _ Ls (k + 1) (Nat.le_add_left 1 k) hLs
   refine ⟨G, hGdim, ?_⟩
   rw [hGlang]
   -- `⋃ L : ↑Sf, L.val = FullBehaviorLanguage A k Sym encode`.
@@ -335,22 +352,17 @@ theorem full_behavior_bound {V : Type*} [DecidableEq V] [Fintype V]
     rw [Set.Finite.mem_toFinset]
     exact ⟨td, r, hwidth, rfl⟩
 
-/-- **Main theorem, full-behavior formulation** (paper Theorem `thm:main`).
+/-! **Main theorem, full-behavior formulation** (paper Theorem `thm:main`).
 
 Under the standard hypotheses, there is a uniform `k` such that every
 agent's full behavior language is a `(k+1)`-MCFL — bounding every action
 sequence the agent can produce consistently with its beliefs.
 
-**Scope of this statement.** Per agent, `V` and the domains `D v` are
-finite, so the per-agent full behavior language is a finite set of
-strings. The substantive content of the theorem therefore lives in the
-*proof* (which exhibits an explicit `(k+1)`-MCFG via `bridge_theorem`)
-and in the *uniformity* of `k` across the entire RE class `𝓐` (which
-comes from Grohe). The non-trivial set-level statement is
-`main_theorem_finite_subclass`, which says the union of behavior
-languages over any finite sub-class of `𝓐` lives in the same `(k+1)`-MCFL
-class with the same uniform `k`. See repository `STATUS.md` for the full
-discussion of headline framing. -/
+The statement is existential and does not ask for a procedure that constructs
+or preserves a solution.  Its class-level content is the common value of `k`,
+obtained from the uniform treewidth theorem: all member schedule languages are
+bounded by the same MCFG class, and finite families may be stitched without
+changing that class. -/
 theorem main_theorem_full
     (h_conj : FPT_ne_W1)
     (𝓐 : SizedEmbodiedAgentClass)
@@ -361,13 +373,54 @@ theorem main_theorem_full
     (h_arity : 𝓐.BoundedArity)
     (h_cores : 𝓐.AllCores)
     (Sym : Type*) (encode : (v : Fin A.n) → A.D v → Sym) :
-    ∃ k, IsMCFL (A.agent.FullBehaviorLanguage k Sym encode) (k + 1) := by
+    ∃ k, IsMCFL.{_, 0} (A.agent.FullBehaviorLanguage k Sym encode) (k + 1) := by
   obtain ⟨k, hk⟩ := class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
   exact ⟨k, full_behavior_bound A.agent k (hk A hA) Sym encode⟩
 
+/-- **Instantaneous operational-semantics corollary.**
+
+`actual` is an independently supplied language of action words for one
+instantaneous belief/action CSP.  The hypothesis `hschedule` is the exact
+semantic bridge needed to identify that operational language with the
+structured yields used by the graph-grammar argument.  It says that whenever a
+width bound is available, the schedules admitted by the agent's own policy and
+scheduling constraints are exactly the projections along the corresponding
+width-bounded tree-compatible orderings.
+
+This theorem separates two facts that should not be conflated:
+
+* action and scheduling variables may be vertices of the original CSP; and
+* their operational words must still be proved to coincide with the structured
+  yield language to which the bounded-treewidth/MCFG result applies.
+
+Under that equality, the ceiling is a theorem about the independently defined
+behavior of the original agent, not merely about an auxiliary decomposition
+language. -/
+theorem main_theorem_instantaneous_behavior
+    (h_conj : FPT_ne_W1)
+    (𝓐 : SizedEmbodiedAgentClass)
+    (A : SizedEmbodiedAgent)
+    (hA : A ∈ 𝓐)
+    (h_re : 𝓐.RecursivelyEnumerable)
+    (h_tract : 𝓐.UniformTractableBelRevision)
+    (h_arity : 𝓐.BoundedArity)
+    (h_cores : 𝓐.AllCores)
+    (Sym : Type*) (encode : (v : Fin A.n) → A.D v → Sym)
+    (actual : Set (List Sym))
+    (hschedule : ∀ k,
+      (∀ B ∈ 𝓐, B.agent.constraintHypergraph.HasTreewidthAtMost k) →
+      actual = A.agent.FullBehaviorLanguage k Sym encode) :
+    ∃ k, IsMCFL.{_, 0} actual (k + 1) := by
+  obtain ⟨k, hk⟩ :=
+    class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
+  have htw := hk A hA
+  refine ⟨k, ?_⟩
+  rw [hschedule k hk]
+  exact full_behavior_bound A.agent k htw Sym encode
+
 /-! ## Theorem 12.3: Uniform grammar family (architectural-limit form) -/
 
-/-- **Theorem 12.3 (Uniform grammar family).**
+/-! **Theorem 12.3 (Uniform grammar family).**
 
 The architectural-limit reading of the main theorem, surfaced at the
 statement level. There exists a uniform `k` (from Grohe) and a uniform
@@ -376,23 +429,12 @@ width-`≤k` rooted tree decomposition `(td, r)` of `A`'s constraint
 hypergraph, `G A hA td r hwidth` is an explicit `(k+1)`-MCFG generating
 `A`'s tree-structured behavior language.
 
-Why this is stronger than `main_theorem_full` *as a statement*. The
-existing `main_theorem_full` says, per agent, that *some* grammar of
-dimension `≤ k+1` exists generating the behavior language. Because the
-per-agent language is finite (since `V` and the domains `D v` are
-`Fintype`), that existential is satisfiable per-agent at dimension `1`
-by any enumerative grammar listing the words — without ever invoking
-Grohe or Engelfriet. The dimension bound `k+1` then carries no
-architectural information at the statement level.
-
-This theorem, by contrast, asserts the existence of a single function
-`G : (A : SizedEmbodiedAgent) → A ∈ 𝓐 → ⋯ → MCFG Sym` whose dimension is
-uniformly bounded by `k+1`. To produce such a `G`, one must have a
-uniform construction recipe — exactly what `behavior_grammar_exists`
-provides via Engelfriet's grammar plus homomorphism plus finite union
-over satisfying assignments. The trivial enumerative-grammar
-satisfaction route does not produce a uniform recipe; the bridge
-construction does.
+The result is existential at the class level: it does not require an
+algorithm that constructs grammars or preserves a chosen satisfying assignment.
+Classical choice merely packages the per-agent existence theorem as a family.
+The substantive restriction is that all schedules obtained from width-`≤k`
+decompositions lie in the same `(k+1)`-MCFL class; finite stitching does not
+select or alter `k`.
 
 The `k` is uniform across the entire RE class `𝓐`, including agents of
 unboundedly many sizes; this is the substantive Grohe consequence. -/
@@ -406,6 +448,8 @@ theorem main_theorem_uniform_family
     (Sym : Type*)
     (encode : (A : SizedEmbodiedAgent) → (v : Fin A.n) → A.D v → Sym) :
     ∃ k : ℕ,
+      (∀ (A : SizedEmbodiedAgent), A ∈ 𝓐 →
+        A.agent.constraintHypergraph.HasTreewidthAtMost k) ∧
       ∃ G : (A : SizedEmbodiedAgent) → A ∈ 𝓐 →
             (td : TreeDecomposition A.agent.constraintHypergraph) → (r : td.I) →
             td.width ≤ k → MCFG.{_, 0} Sym,
@@ -416,11 +460,10 @@ theorem main_theorem_uniform_family
           (G A hA td r hwidth).Language =
             A.agent.TreeBehaviorLanguage td r Sym (encode A) := by
   classical
-  -- Step 1: Grohe gives the uniform k.
-  obtain ⟨k, _hk⟩ :=
+  obtain ⟨k, hk⟩ :=
     class_tractable_implies_bounded_tw h_conj 𝓐 h_re h_tract h_arity h_cores
-  refine ⟨k, ?_⟩
-  -- Step 2: Define the uniform construction `G` by extracting from
+  refine ⟨k, hk, ?_⟩
+  -- Define the uniform construction `G` by extracting from
   -- `behavior_grammar_exists` per (A, td, r, hwidth). The point is that
   -- a single function from agents and decompositions to grammars is
   -- exhibited; its dimension is uniformly `≤ k+1` by the bridge

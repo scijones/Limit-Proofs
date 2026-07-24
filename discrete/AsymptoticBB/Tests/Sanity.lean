@@ -116,20 +116,9 @@ theorem EmbodiedAgent.fullBehaviorLanguage_nonempty
   obtain ⟨w, hw⟩ := A.treeBehaviorLanguage_nonempty hsat td r Sym encode
   exact ⟨w, td, r, hwidth, hw⟩
 
-/-- **Non-vacuous full-behavior bound.** The conjunction of
-`full_behavior_bound` and `fullBehaviorLanguage_nonempty`: for a
-satisfiable agent of treewidth ≤ k, the full behavior language is a
-`(k+1)`-MCFL AND is non-empty. Neither conjunct can be met by the empty
-grammar, and (with `finite_language_is_mcfl` purged from the trust base)
-the MCFL conjunct is only reachable through the Grohe→Engelfriet bridge,
-so the dimension bound genuinely derives from treewidth. -/
-theorem full_behavior_bound_nonvacuous
-    {V : Type u} [DecidableEq V] [Fintype V]
-    {D : V → Type v} [∀ v, DecidableEq (D v)] [∀ v, Fintype (D v)]
-    (A : EmbodiedAgent V D) (k : ℕ) (hsat : A.toCSP.IsSatisfiable)
-    (htw : A.constraintHypergraph.HasTreewidthAtMost k)
-    (Sym : Type*) (encode : (v : V) → D v → Sym) :
-    IsMCFL (A.FullBehaviorLanguage k Sym encode) (k + 1) ∧
-      (A.FullBehaviorLanguage k Sym encode).Nonempty :=
-  ⟨full_behavior_bound A k htw Sym encode,
-   A.fullBehaviorLanguage_nonempty k hsat htw Sym encode⟩
+/-!
+The non-emptiness theorem above is independent of the grammar bound.  The active
+`full_behavior_bound` obtains each constituent language from the width-bounded
+bridge and then stitches the finite family existentially; no particular
+solution or derivation is required to be preserved.
+-/

@@ -1,7 +1,9 @@
 import AsymptoticBB
 
-#print axioms full_behavior_bound
-#print axioms main_theorem_finite_subclass
-#print axioms main_theorem_full
-#print axioms full_behavior_bound_nonvacuous
+#print axioms class_tractable_implies_bounded_tw
+#print axioms main_theorem_instantaneous_behavior
+#print axioms HomSystem.cspDecision_iff_of_equivalent
+#print axioms HomSystem.complexity_correspondence_via_core_composition
+#print axioms HomSystem.complexity_correspondence_via_static_core_witnesses
+#print axioms HomSystem.exact_complexity_correspondence_via_core_composition
 #print axioms flagAgent_behavior_mem

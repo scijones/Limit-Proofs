@@ -1,0 +1,537 @@
+% Converted to LNCS format for AGI-26 submission
+% Pure syntax conversion of discrete_case_clean_proof_v8.tex
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+%
+\begin{document}
+%
+\title{Automaton Equivalence for Tractable Belief-Driven Systems}
+%
+\titlerunning{Automaton Equivalence for Tractable Belief-Driven Systems}
+%
+\author{Steven J. Jones}
+%
+\authorrunning{S.J. Jones}
+%
+\institute{Independent Researcher\\
+\email{scijones@umich.edu}}
+%
+\maketitle
+%
+\begin{abstract}
+Assuming $\mathrm{FPT} \neq \mathrm{W}[1]$, we prove that: for any recursively enumerable class of embodied systems that supports uniform tractable (polynomial-time) belief revision over arbitrary constraint relations with bounded arity, every member of that class has bounded-treewidth constraint structure; consequently, for a system with beliefs about its actions there exists a tree decomposition characterizing agent policy under which action sequences form a $(k{+}1)$-multiple context-free language, where $k$ is the uniform treewidth bound for the class.
+For any finite sub-class, the union of these languages is again a single $(k{+}1)$-MCFL.
+This establishes a substrate-agnostic structural limit on the behavioral complexity of belief-driven agents, independent of biological or artificial implementation substrate.
+
+\keywords{bounded treewidth \and constraint satisfaction \and multiple context-free languages \and belief revision \and parameterized complexity \and embodied agents}
+\end{abstract}
+
+%% ========================================================================
+\section{Introduction}\label{sec:intro}
+
+We establish a substrate-agnostic upper bound on the behavioral complexity of \emph{discrete} belief-driven agents that revise their beliefs tractably.
+The core of our argument turns on the linearization constraint of physical embodiment: although an agent's internal belief dynamics may possess parallel, graph-structured constraint dependencies, physical time is linearly ordered and an embodied agent executes $\approx$ actions (self-consistent specifications over its body) sequentially. The agent must continuously project its graph-structured belief updates onto a linear sequence of behavior. In this paper, we show that if this reasoning process is tractable in arbitrary environments, the resulting behavioral sequence is subject to a strict formal-language ceiling.
+
+\paragraph{The capability-test perspective.}
+The result does not assume any particular internal architecture, but it does assume discrete representations.
+The intent, though, is to portray the implications of a system that \emph{supports a capability}: given any correction to an internal variable implementing a belief about the world (an observation that contradicts a current belief), the system can tractably propagate that correction through its internal dependency structure, finding a new jointly consistent assignment, for arbitrary constraint relations on its variables.
+This is a capacity for belief revision.
+We prove that any system tractably supporting this capability faces a structural limit on its behavioral complexity.
+
+The demand for arbitrary constraint relations is not an exotic worst-case assumption.
+It is the minimal requirement for general-purpose reasoning: a system in an arbitrary environment may encounter arbitrary relationships among the quantities it senses.
+In Section~\ref{sec:escape}, we cite other results showing that if it can only revise beliefs under a restricted class of constraints, there are environmental relationships it cannot represent---and for which the best approximation within its constraint language carries \emph{zero} information. Such a system is a specialist, not general-purpose. Our result therefore characterizes the price of generality: a system that is genuinely general-purpose must have bounded treewidth, and a system with bounded treewidth faces the behavioral ceiling we prove.
+
+The argument proceeds as follows.
+We first introduce the notation needed for pinned CSPs (used to model a belief revision capability's functional relationship with action), treewidth, and multiple context-free languages (\S\ref{sec:prelim}), then define embodied agents (\S\ref{sec:agent}) and the relevant complexity-theoretic assumptions (\S\ref{sec:complexity}).
+We then show that for any recursively enumerable class of possible online belief-revision instances handled by one fixed architecture, uniform tractable belief revision over arbitrary constraint relations forces a uniform bounded-treewidth bound on the class (\S\ref{sec:tractability}).
+Next, we prove that any embodied agent whose constraint graph has treewidth at most~$k$ generates tree-structured action sequences in a $(k{+}1)$-MCFL (\S\ref{sec:bridge}) and state the resulting class-level main theorem (\S\ref{sec:main}).\footnote{An accompanying repository (asdf) contains a Lean formalization of the core proof.}
+Finally, we address potential escape routes, including restricted languages, parallelization, and approximation (\S\ref{sec:escape}). We conclude by framing this as a trilemma, establishing that systems must sacrifice general expressiveness, tractability, or execution beyond bounded-treewidth coordination. 
+
+\paragraph{Complexity-theoretic assumptions.}
+The main theorem (Theorem~\ref{thm:main}) requires a single standard conjecture: $\mathrm{FPT} \neq \mathrm{W}[1]$, the parameterized analogue of $\mathrm{P} \neq \mathrm{NP}$.
+The fuller closure of escape routes in \S\ref{sec:escape} additionally invokes two further standard conjectures: the Exponential Time Hypothesis (ETH), for quantitative treewidth lower bounds; and the Unique Games Conjecture (UGC), for optimal inapproximability results.
+We state explicitly which results depend on which assumptions throughout.
+
+\paragraph{Scope.}
+The bound applies to \emph{self-consistent} behavior: action sequences derivable from satisfying assignments to the system's constraint structure.
+It does not bound the complexity of self-\emph{inconsistent} behavior --- a system acting incoherently with respect to its own beliefs faces no such ceiling, and no such bound would be interesting.
+Self-consistent behavior is the regime where a system's actions are grounded in its model of the world, which is the regime relevant to competent agency.
+
+%% ========================================================================
+\section{Preliminaries}\label{sec:prelim}
+
+We use standard notions from structural CSP theory, treewidth, hyperedge replacement grammars, and multiple context-free grammars; see Grohe~\cite{Grohe07}, Engelfriet~\cite{Engelfriet97}, and Seki et al.~\cite{Seki91}. We assume standard definitions of CSPs, satisfying assignments, constraint hypergraphs, tree decompositions, and treewidth.
+
+\begin{definition}[Pinned instance]\label{def:pinned}
+Given a CSP instance $\mathcal{P}$, a variable $X_i$, and a value $v \in D_i$, the pinned instance $\mathcal{P}|_{X_i = v}$ is obtained by fixing $X_i$ to $v$ and restricting every incident constraint relation accordingly. We write $\mathrm{Sol}(\mathcal{P})$ for the set of satisfying assignments.
+\end{definition}
+
+Every CSP instance has a natural \emph{constraint hypergraph}: variables are vertices, and each constraint's scope (the set of variables it involves) forms a hyperedge. The structural complexity of this hypergraph governs the tractability of the CSP.
+
+\begin{definition}[Tree decomposition, treewidth, and tree-compatible orderings]\label{def:treedecomp}
+A tree decomposition of a hypergraph $H = (V, E)$ is a tree $T$ with bags (sets) $\{B_t\}_{t \in V(T)}$ satisfying:
+\begin{enumerate}[nosep,label=(T\arabic*)]
+  \item\label{td:cover} $\bigcup_{t \in V(T)} B_t = V$,
+  \item\label{td:edge} for every hyperedge of $H$, there exists a bag such that all of its vertices are contained in that bag,
+  \item\label{td:subtree} for each $v \in V$, the bags containing $v$ induce a connected subtree of~$T$ (if $v \in B_a$ and $v \in B_c$, then $v \in B_b$ for every node $b$ on the unique path from $a$ to $c$ in~$T$).
+\end{enumerate}
+Its width is $\max_t |B_t| - 1$, and the minimum possible width is the treewidth $\mathrm{tw}(H)$.\label{def:treewidth}
+For a rooted decomposition $(T, \{B_t\}, r)$, we write $\mathrm{TCO}(T, r)$ for the set of tree-compatible orderings induced by the decomposition, i.e., the structured yields produced by the Engelfriet construction. In general these form a strict subset of all permutations of~$V$.\label{def:tree-compatible-ordering}
+\end{definition}
+
+Every hypergraph admits at least the trivial decomposition (a single bag containing all vertices), so $\mathrm{tw}(H)$ is always finite; the nontrivial content of bounded treewidth is that the hypergraph decomposes into pieces interacting only through narrow interfaces arranged as a tree.
+
+An order-$k$ string HRG is an HRG of nonterminal rank at most $k$ whose terminal derivations yield strings. An MCFG generalizes a context-free grammar by allowing a nonterminal to generate a tuple of strings rather than a single string. The only HRG/MCFG facts we need are the following.
+
+\begin{theorem}[HRG characterization of bounded treewidth; Engelfriet~\cite{Engelfriet97}]\label{thm:hrg-tw}
+A class of graphs has treewidth at most $k$ if and only if it is contained in the graph language of some HRG of order~$k$.
+\end{theorem}
+
+\begin{theorem}[String yields of HRGs; Engelfriet~\cite{Engelfriet97}]\label{thm:hrg-mcfl}
+The string languages of order-$k$ string HRGs are exactly the $(k{+}1)$-MCFLs.
+\end{theorem}
+
+\begin{definition}[Dimension; $d$-MCFG; $d$-MCFL]\label{def:dimension}
+A $d$-MCFG is a multiple context-free grammar whose nonterminals have arity at most $d$. A language generated by some $d$-MCFG is a $d$-multiple context-free language ($d$-MCFL).
+\end{definition}
+
+\begin{remark}\label{rem:mcfg-cfg}
+A $1$-MCFG is exactly a context-free grammar. Thus the $1$-MCFLs are exactly the context-free languages.
+\end{remark}
+
+\begin{lemma}[Closure properties of $d$-MCFLs; Seki et al.~\cite{Seki91}]\label{lem:mcfl-closure}
+The class of $d$-MCFLs is closed under:
+\begin{enumerate}[nosep,label=(\alph*)]
+  \item\label{closure:hom} \textbf{Homomorphic image:} if $L$ is a $d$-MCFL over $\Sigma_1$ and $h\colon \Sigma_1 \to \Sigma_2^*$ is a homomorphism, then $h(L) = \{h(w) : w \in L\}$ is a $d$-MCFL.
+  \item\label{closure:union} \textbf{Finite union.}
+  \item\label{closure:concat} \textbf{Concatenation.}
+  \item\label{closure:star} \textbf{Kleene star.}
+\end{enumerate}
+\end{lemma}
+
+These are the standard constructions from Seki et al.~\cite{Seki91}: homomorphisms replace terminals, finite unions and concatenations add an arity-$1$ start symbol, and Kleene star adds the usual arity-$1$ recursive start symbol. None increases nonterminal arity, so the dimension bound is preserved.
+
+%% ========================================================================
+\section{Embodied Agents}\label{sec:agent}
+
+\begin{definition}[Embodied agent]\label{def:agent}
+An embodied agent is a pair $\mathfrak{A} = (\mathcal{P}, \mathcal{V}_A)$ where $\mathcal{P}$ is a CSP instance and $\mathcal{V}_A \subseteq \mathcal{V}$ is a non-empty set of action variables. The action alphabet is $\mathcal{A} = \bigcup_{X_i \in \mathcal{V}_A} D_i$, and the constraint hypergraph of $\mathfrak{A}$ is the hypergraph on $\mathcal{V}$ with one hyperedge for each constraint scope of $\mathcal{P}$.
+\end{definition}
+
+A belief state is any satisfying assignment $\beta \in \mathrm{Sol}(\mathcal{P})$; belief revision on observing $X_i = v$ seeks some $\beta' \in \mathrm{Sol}(\mathcal{P}|_{X_i = v})$.
+
+\begin{remark}[Policy as belief structure]\label{rem:policy}
+The agent's policy is not a separate object: it is encoded in the constraints whose scopes include both action and non-action variables. An agent that conditions actions on inferred state must have constraints whose scopes include both action and state variables; these shared scopes form hyperedges of the constraint hypergraph. By~\ref{td:edge}, each such hyperedge lies within a single bag, forcing co-dependent variables into local proximity in the decomposition tree. The tree-compatible orderings are precisely the linearizations that respect this locality. The constraint on ordering is therefore not an external imposition but a direct consequence of the agent's capacity to act on its beliefs. Given a belief state $\beta \in \mathrm{Sol}(\mathcal{P})$, the values of action variables are determined by $\beta$ via these constraints. This is intended to capture a capacity to update how one's actions are constrained or selected relative to the observed environment.
+\end{remark}
+
+\begin{definition}[Tree-structured behavior language]\label{def:behavior-language}
+Let $\mathfrak{A} = (\mathcal{P}, \mathcal{V}_A)$ be an embodied agent whose constraint hypergraph has a rooted tree decomposition $(T, \{B_t\}, r)$. A word $w \in \mathcal{A}^*$ belongs to $\mathcal{L}(\mathfrak{A}, T, r)$ if there exist a satisfying assignment $\beta \in \mathrm{Sol}(\mathcal{P})$ and a tree-compatible ordering $\pi = (v_1, \ldots, v_n) \in \mathrm{TCO}(T, r)$ such that $w$ is the subsequence of $\beta(v_1)\cdots\beta(v_n)$ obtained by deleting the entries attached to non-action variables.
+\end{definition}
+
+\begin{remark}[Grammar as witness]\label{rem:witness}
+The bridge theorem (Theorem~\ref{thm:bridge}) produces a width-$\leq k$ tree decomposition $(T, \{B_t\}, r)$ of $H$ together with a $(k{+}1)$-MCFG whose language is $\mathcal{L}(\mathfrak{A}, T, r)$ and which contains at least one action-sequence word arising from every belief state of $\mathfrak{A}$. This single witness suffices: in the descriptional-complexity sense of Holzer and Kutrib~\cite{HolzerKutrib11}, the existence of one $(k{+}1)$-MCFG generating $\mathcal{L}(\mathfrak{A}, T, r)$ upper-bounds its inherent MCFL dimension at $k{+}1$. Using a wider decomposition of $H$ would produce a different language with looser locality among variable updates, and could not lower the bound on $\mathcal{L}(\mathfrak{A}, T, r)$ itself. Action sequences that respect no tree decomposition of $H$ fall outside the $(k{+}1)$-MCFL hierarchy in general~\cite{Seki91}, and are also not realizable as linearizations of $\mathfrak{A}$'s constraint structure.
+\end{remark}
+
+\begin{definition}[Class of embodied agents]\label{def:agent-class}
+A class of embodied agents is a set $\mathfrak{C}$ of embodied agents. In the online real-time setting relevant here, $\mathfrak{C}$ is interpreted as the collection of possible belief-revision instances handled by one fixed computational architecture, with induced hypergraph class
+\[
+  \mathcal{H}(\mathfrak{C}) = \{ H_{\mathfrak{A}} : \mathfrak{A} \in \mathfrak{C} \}.
+\]
+\end{definition}
+
+%% ========================================================================
+\section{Parameterized Complexity}\label{sec:complexity}
+
+The tractability theorem (\S\ref{sec:tractability}) relies on a complexity-theoretic assumption, which we now state.
+
+\begin{definition}[Fixed-parameter tractability (FPT)]\label{def:fpt}
+A parameterized problem is a language $L \subseteq \Sigma^* \times \mathbb{N}$.
+It is \emph{fixed-parameter tractable} (FPT) if there exists an algorithm deciding $(x, k) \in L$ in time $f(k) \cdot |x|^{O(1)}$ for some computable function $f$.
+\end{definition}
+
+\begin{definition}[{$\mathrm{W}[1]$}]\label{def:w1}
+$\mathrm{W}[1]$ is the class of parameterized problems reducible (by FPT reductions) to the parameterized \textsc{Clique} problem: given a graph $G$ and integer $k$, decide whether $G$ contains a clique of size~$k$, parameterized by~$k$.
+\end{definition}
+
+\begin{remark}\label{rem:fpt-conj}
+$\mathrm{FPT} \subseteq \mathrm{W}[1]$, and $\mathrm{FPT} \neq \mathrm{W}[1]$ is a standard conjecture in parameterized complexity, analogous to $\mathrm{P} \neq \mathrm{NP}$.
+It implies that \textsc{Clique} (parameterized by solution size) has no FPT algorithm, i.e., is not solvable in time $f(k) \cdot n^{O(1)}$ for any computable~$f$.
+\end{remark}
+
+%% ========================================================================
+\section{Tractability Implies Bounded Treewidth}\label{sec:tractability}
+
+\begin{definition}[Tractable belief revision]\label{def:tractable-revision}
+Belief revision is \emph{tractable} for $\mathfrak{A}$ if, for every choice of constraint relations on the fixed constraint hypergraph $H_{\mathfrak{A}}$ of $\mathfrak{A}$, finding a satisfying assignment (or correctly determining that none exists) can be done in time polynomial in the size of the resulting CSP instance.
+\end{definition}
+
+\begin{definition}[Uniform tractable belief revision for a class]\label{def:uniform-tractable-revision}
+Let $\mathfrak{C}$ be a class of embodied agents (Definition~\ref{def:agent-class}).
+We say that $\mathfrak{C}$ has \emph{uniform tractable belief revision} if there exists a single algorithm $M$ such that for every agent $\mathfrak{A} \in \mathfrak{C}$, and for every choice of constraint relations on the fixed hypergraph $H_{\mathfrak{A}}$, the algorithm $M$ computes a satisfying assignment (or correctly reports that none exists) in time polynomial in the size of the resulting CSP instance.
+Equivalently: one fixed online architecture solves belief revision in polynomial time across the entire induced hypergraph class $\mathcal{H}(\mathfrak{C})$.
+\end{definition}
+
+\begin{definition}[Uniform bounded arity for a class]\label{def:class-bounded-arity}
+A class of embodied agents $\mathfrak{C}$ has \emph{uniformly bounded arity} if there exists a constant $r$ such that every agent $\mathfrak{A} \in \mathfrak{C}$ has constraint hypergraph of arity at most~$r$.
+\end{definition}
+
+\begin{remark}[Why Grohe is invoked at class level]\label{rem:grohe-class}
+Definition~\ref{def:tractable-revision} is instance-local: it varies the relations while keeping one fixed hypergraph. Grohe's theorem is stronger and informative only for a class of possible instances handled by one fixed algorithm. For a single finite hypergraph $H$, the statement ``there exists $k$ with $\mathrm{tw}(H) \leq k$'' is trivial. The nontrivial content is that one constant $k$ works uniformly across an entire class.
+\end{remark}
+
+\begin{theorem}[Grohe~\cite{Grohe07}]\label{thm:grohe}
+Assume $\mathrm{FPT} \neq \mathrm{W}[1]$.
+Let $\mathcal{H}$ be a recursively enumerable class of core relational structures of bounded arity.
+If the CSP restricted to instances whose constraint hypergraph belongs to $\mathcal{H}$ is solvable in polynomial time for all choices of constraint relations, then $\mathcal{H}$ has bounded treewidth.
+\end{theorem}
+
+\begin{remark}[The core condition]\label{rem:core}
+A relational structure is a \emph{core} if every endomorphism is an automorphism.
+Grohe's theorem concludes bounded treewidth \emph{of cores}; without this condition, the class of bipartite graphs is a counterexample (CSP is tractable, yet grids are bipartite with unbounded treewidth---their cores are $K_1$ or $K_2$).
+Since every finite relational structure has a unique core (up to isomorphism), and the core is the canonical representative of its homomorphic equivalence class, we adopt the standard convention of the structural CSP literature: \emph{for the remainder of this paper, every constraint hypergraph is assumed to be a core.}
+This is without loss of generality.
+Variables identified by a non-injective endomorphism carry no independent constraint information---they are redundant copies whose values are determined by the remaining variables.
+Collapsing them does not change the complexity of the associated CSP, and any satisfying assignment to the core extends to a satisfying assignment of the original structure by composing with the retraction.
+\end{remark}
+
+\begin{corollary}[Class-level bounded treewidth]\label{cor:tractable-tw}
+Assume $\mathrm{FPT} \neq \mathrm{W}[1]$.
+Let $\mathfrak{C}$ be a recursively enumerable class of embodied agents.
+Assume $\mathfrak{C}$ has uniform tractable belief revision (Definition~\ref{def:uniform-tractable-revision}) and uniformly bounded arity (Definition~\ref{def:class-bounded-arity}).
+Then there exists a constant $k$ such that for every agent $\mathfrak{A} \in \mathfrak{C}$, the core of the constraint hypergraph $H_{\mathfrak{A}}$ satisfies $\mathrm{tw}(\mathrm{core}(H_{\mathfrak{A}})) \leq k$.
+\end{corollary}
+
+\begin{proof}
+Apply Theorem~\ref{thm:grohe} to the core class $\{\mathrm{core}(H) : H \in \mathcal{H}(\mathfrak{C})\}$ (Remark~\ref{rem:core}).
+By hypothesis, one fixed algorithm solves every CSP whose hypergraph lies in $\mathcal{H}(\mathfrak{C})$ in polynomial time for all choices of relations.
+The class has uniformly bounded arity, and the core class is recursively enumerable.
+Hence there exists $k$ such that every core has treewidth at most~$k$.
+\end{proof}
+
+\begin{corollary}[Instance-level instantiation]\label{cor:tractable-tw-instance}
+Assume the hypotheses of Corollary~\ref{cor:tractable-tw}.
+If $\mathfrak{A} \in \mathfrak{C}$, then $\mathrm{tw}(H_{\mathfrak{A}}) \leq k$ for the same constant~$k$.
+\end{corollary}
+
+\begin{proof}
+By our standing convention (Remark~\ref{rem:core}), each constraint hypergraph $H_{\mathfrak{A}}$ is a core, so $H_{\mathfrak{A}} = \mathrm{core}(H_{\mathfrak{A}})$ and the bound follows from Corollary~\ref{cor:tractable-tw}.
+\end{proof}
+
+%% ========================================================================
+\section{Bounded Treewidth Implies MCFL Behavior}\label{sec:bridge}
+
+We first establish two properties of tree decompositions, then prove the bridge theorem.
+
+\begin{lemma}[Constraint locality in tree decompositions]\label{lem:locality}
+Let $\mathcal{P} = \langle \mathcal{V}, \mathcal{D}, \mathcal{C} \rangle$ be a CSP and $(T, \{B_t\})$ a tree decomposition of the constraint hypergraph of $\mathcal{P}$.
+Then for every constraint $C_j = \langle S_j, R_j \rangle$, all variables in $S_j$ appear together in at least one bag: $\mathrm{vars}(S_j) \subseteq B_t$ for some $t \in V(T)$.
+\end{lemma}
+
+\begin{proof}
+Immediate from condition~\ref{td:edge} of Definition~\ref{def:treedecomp}: each hyperedge (= constraint scope) is contained in some bag.
+\end{proof}
+
+\begin{lemma}[Boundary size in tree decompositions]\label{lem:boundary}
+Let $(T, \{B_t\})$ be a tree decomposition of $H = (V,E)$ of width $k$, rooted at an arbitrary node $r$.
+For any node $t \in V(T)$, define:
+\begin{itemize}[nosep]
+  \item $V^{\downarrow}_t = \bigcup \{B_s : s \text{ is $t$ or a descendant of $t$ in $T$}\}$ (the vertices ``below'' $t$),
+  \item $\partial_t = V^{\downarrow}_t \cap \bigcup\{B_s : s \notin \text{subtree at } t\}$ (the ``boundary'' of the subtree at $t$).
+\end{itemize}
+Then $\partial_t \subseteq B_t$ and $|\partial_t| \leq k + 1$.
+\end{lemma}
+
+\begin{proof}
+Let $v \in \partial_t$.
+Then $v \in B_s$ for some descendant-or-equal $s$ of $t$, and $v \in B_{s'}$ for some $s'$ outside the subtree at $t$.
+By condition~\ref{td:subtree} (running intersection), the bags containing $v$ form a connected subtree of $T$.
+This subtree includes $B_s$ (in the subtree at $t$) and $B_{s'}$ (outside it), so it must contain the unique path from $s$ to $s'$.
+This path passes through $t$, so $v \in B_t$.
+Since $|B_t| \leq k + 1$, we have $|\partial_t| \leq k + 1$.
+\end{proof}
+
+\begin{theorem}[Bridge theorem]\label{thm:bridge}
+Let $\mathfrak{A} = (\mathcal{P}, \mathcal{V}_A)$ be an embodied agent whose constraint hypergraph $H$ has $\mathrm{tw}(H) \leq k$.
+Then there exist a tree decomposition $(T, \{B_t\})$ of $H$ of width at most~$k$ and a root~$r$ of~$T$ such that the tree-structured behavior language $\mathcal{L}(\mathfrak{A}, T, r)$ (Definition~\ref{def:behavior-language}) is a $(k{+}1)$-MCFL.
+Moreover, every belief state $\beta \in \mathrm{Sol}(\mathcal{P})$ contributes at least one word to $\mathcal{L}(\mathfrak{A}, T, r)$.
+\end{theorem}
+
+\begin{proof}
+By the treewidth hypothesis, fix a tree decomposition $(T, \{B_t\})$ of $H$ of width at most~$k$ and an arbitrary root~$r$ of~$T$.
+We show $\mathcal{L}(\mathfrak{A}, T, r)$ is a $(k{+}1)$-MCFL by composing Engelfriet's theorem with the closure properties of Lemma~\ref{lem:mcfl-closure}.
+
+\medskip
+\noindent\textbf{Step 1: Ordering grammar from Engelfriet.}
+Label each vertex $v$ of $H$ by a symbol recording $v$'s identity.
+By Theorems~\ref{thm:hrg-tw} and~\ref{thm:hrg-mcfl}, there exists a $(k{+}1)$-MCFG $\mathcal{G}_{\mathrm{ord}}$ over the terminal alphabet $\mathcal{V}$ whose language $L(\mathcal{G}_{\mathrm{ord}})$ is exactly the set of tree-compatible orderings of $\mathcal{V}$ with respect to $(T, \{B_t\}, r)$ (Definition~\ref{def:tree-compatible-ordering}).
+
+\medskip
+\noindent\textbf{Step 2: Homomorphic coding per satisfying assignment.}
+For each satisfying assignment $\beta \in \mathrm{Sol}(\mathcal{P})$, define the homomorphism $h_\beta\colon \mathcal{V} \to \mathcal{A}^*$ by:
+\[
+  h_\beta(X_i) = \begin{cases} \beta(X_i) & \text{if } X_i \in \mathcal{V}_A, \\ \varepsilon & \text{otherwise.} \end{cases}
+\]
+That is, $h_\beta$ replaces each action variable with the value $\beta$ assigns to it, and deletes non-action variables.
+
+\medskip
+\noindent\textbf{Step 3: Closure under homomorphism.}
+By Lemma~\ref{lem:mcfl-closure}\ref{closure:hom}, for each $\beta \in \mathrm{Sol}(\mathcal{P})$, the image $h_\beta(L(\mathcal{G}_{\mathrm{ord}}))$ is a $(k{+}1)$-MCFL.
+
+\medskip
+\noindent\textbf{Step 4: Closure under finite union.}
+Since all domains are finite, $\mathrm{Sol}(\mathcal{P})$ is finite.
+By Lemma~\ref{lem:mcfl-closure}\ref{closure:union},
+\[
+  L_{\mathrm{beh}} \;=\; \bigcup_{\beta \in \mathrm{Sol}(\mathcal{P})} h_\beta\big(L(\mathcal{G}_{\mathrm{ord}})\big)
+\]
+is a $(k{+}1)$-MCFL.
+
+\medskip
+\noindent\textbf{Step 5: Correctness ($L_{\mathrm{beh}} = \mathcal{L}(\mathfrak{A}, T, r)$).}
+
+This is immediate from the definitions.
+$L(\mathcal{G}_{\mathrm{ord}})$ is exactly the set of tree-compatible orderings (by the soundness and completeness of the Engelfriet construction), and $\mathcal{L}(\mathfrak{A}, T, r)$ is defined as the set of projections of tree-compatible orderings onto action variables under satisfying assignments.
+Hence:
+\begin{align*}
+  w \in L_{\mathrm{beh}} &\iff \exists\, \beta \in \mathrm{Sol}(\mathcal{P}),\; \exists\, \pi \in L(\mathcal{G}_{\mathrm{ord}}),\; w = h_\beta(\pi) \\
+    &\iff \exists\, \beta \in \mathrm{Sol}(\mathcal{P}),\; \exists\, \pi \in \mathrm{TCO}(T, r),\; w = \mathrm{proj}_{\mathcal{V}_A}(\beta, \pi) \\
+    &\iff w \in \mathcal{L}(\mathfrak{A}, T, r).
+\end{align*}
+
+\medskip
+\noindent\textbf{Step 6: Coverage.}
+The set $\mathrm{TCO}(T, r)$ is non-empty: any depth-first traversal of $T$ that emits the vertices of each bag in order induces a tree-compatible ordering of $\mathcal{V}$. Hence for every $\beta \in \mathrm{Sol}(\mathcal{P})$ the image $h_\beta(L(\mathcal{G}_{\mathrm{ord}}))$ contains at least one word, so every belief state contributes at least one word to $\mathcal{L}(\mathfrak{A}, T, r)$.
+\end{proof}
+
+%% ========================================================================
+\section{Main Result}\label{sec:main}
+
+\begin{remark}[Non-vacuity at the class level]\label{rem:non-vacuity}
+For any single finite agent $\mathfrak{A}$, the tree-structured behavior language $\mathcal{L}(\mathfrak{A}, T, r)$ is always finite (finitely many satisfying assignments, finitely many tree-compatible orderings).
+Every finite language is trivially a $d$-MCFL for any~$d$, so a per-agent MCFL bound carries no structural content on its own.
+The class-level statement in Theorem~\ref{thm:main-finite}, by contrast, ranges over finite subsets $F \subseteq \mathfrak{C}$ of arbitrary size: as $|F|$ grows by sampling larger agents, the union language grows without bound, yet the dimension bound $k+1$ remains fixed.
+In this setting, the uniform dimension bound is genuinely non-trivial: it asserts that the formal-language complexity is controlled by the constraint structure, not by the size of individual agents.
+\end{remark}
+
+\begin{theorem}[Main theorem --- per-agent]\label{thm:main}
+Assume $\mathrm{FPT} \neq \mathrm{W}[1]$ (Definition~\ref{def:fpt}, \ref{def:w1}).
+Let $\mathfrak{C}$ be a recursively enumerable class of embodied agents (Definition~\ref{def:agent-class}), and let $\mathfrak{A} = (\mathcal{P}, \mathcal{V}_A)$ be an arbitrary member of~$\mathfrak{C}$.
+Assume:
+\begin{enumerate}[nosep,label=(\roman*)]
+  \item uniform tractable belief revision across $\mathfrak{C}$ (Definition~\ref{def:uniform-tractable-revision}),
+  \item serial action execution (Definition~\ref{def:behavior-language}),
+  \item expressive beliefs (arbitrary constraint relations on every hypergraph in $\mathcal{H}(\mathfrak{C})$),
+  \item uniformly bounded constraint arity across $\mathfrak{C}$ (Definition~\ref{def:class-bounded-arity}).
+\end{enumerate}
+Then there exists a constant $k$ (independent of $\mathfrak{A}$), a tree decomposition $(T, \{B_t\})$ of $H_{\mathfrak{A}}$, and a root $r$ of $T$, such that the tree-structured behavior language $\mathcal{L}(\mathfrak{A}, T, r)$ is a $(k{+}1)$-MCFL (Definition~\ref{def:dimension}).
+\end{theorem}
+
+\begin{proof}
+By Corollary~\ref{cor:tractable-tw-instance}, conditions (i)--(iv) yield a constant $k$ such that every member of $\mathfrak{C}$ has constraint hypergraph (a core, by Remark~\ref{rem:core}) of treewidth at most~$k$.
+In particular, $\mathrm{tw}(H_{\mathfrak{A}}) \leq k$.
+By Theorem~\ref{thm:bridge}, there exist $(T, \{B_t\})$ and $r$ such that $\mathcal{L}(\mathfrak{A}, T, r)$ is a $(k{+}1)$-MCFL.
+\end{proof}
+
+\begin{theorem}[Main theorem --- finite sub-class]\label{thm:main-finite}
+Under the hypotheses of Theorem~\ref{thm:main}, for any finite subset $F \subseteq \mathfrak{C}$, the union
+\[
+  \bigcup_{\mathfrak{A} \in F} \mathcal{L}(\mathfrak{A}, T_{\mathfrak{A}}, r_{\mathfrak{A}})
+\]
+is a $(k{+}1)$-MCFL, where $(T_{\mathfrak{A}}, r_{\mathfrak{A}})$ is the tree decomposition and root witnessing Theorem~\ref{thm:bridge} for each $\mathfrak{A} \in F$, and $k$ is the uniform constant from Corollary~\ref{cor:tractable-tw}.
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:main}, each $\mathcal{L}(\mathfrak{A}, T_{\mathfrak{A}}, r_{\mathfrak{A}})$ is a $(k{+}1)$-MCFL.
+By Lemma~\ref{lem:mcfl-closure}\ref{closure:union}, the finite union of $(k{+}1)$-MCFLs is a $(k{+}1)$-MCFL.
+\end{proof}
+
+\begin{remark}[Strength of the finite sub-class theorem]\label{rem:finite-subclass}
+Theorem~\ref{thm:main-finite} is the strongest non-vacuous statement provable from the finite-union closure of MCFLs.
+As the finite subset $F$ grows---sampling agents of larger and larger sizes---the union language grows without bound, yet the dimension bound $k+1$ remains fixed.
+This shows that the constraint structure genuinely controls the formal-language complexity, uniformly across the class.
+\end{remark}
+
+\begin{corollary}[Temporal trajectory]\label{cor:temporal}
+Under the hypotheses of Theorem~\ref{thm:main}, suppose an agent undergoes a finite sequence of belief revisions producing tree-structured behavior languages $\mathcal{L}_1, \mathcal{L}_2, \ldots, \mathcal{L}_m$, each a $(k{+}1)$-MCFL by Theorem~\ref{thm:main}.
+Then the language of concatenated action patterns $\mathcal{L}_1 \cdot \mathcal{L}_2 \cdots \mathcal{L}_m$ is a $(k{+}1)$-MCFL.
+\end{corollary}
+
+\begin{proof}
+By induction on $m$ using Lemma~\ref{lem:mcfl-closure} (closure under concatenation).
+\end{proof}
+
+%% ========================================================================
+\section{Escape Routes}\label{sec:escape}
+
+\subsection{Restricting the constraint language}\label{sec:expressiveness}\label{sec:restricted}
+
+A natural escape route is to restrict the admissible constraint language---for example, to Horn clauses or 2-SAT---so that inference remains tractable even on unbounded graph structure. The point of the expressiveness argument is that this changes the problem rather than evading the theorem: tractable restricted languages cannot faithfully represent arbitrary environments.
+
+\begin{theorem}[CSP Dichotomy; Bulatov~\cite{Bulatov17}, Zhuk~\cite{Zhuk20}]\label{thm:dichotomy}
+Let $\Gamma$ be a constraint language over a finite domain~$D$ (i.e., a finite set of relations on~$D$).
+Then exactly one of the following holds:
+\begin{enumerate}[nosep,label=(\roman*)]
+  \item\label{di:tractable} $\mathrm{CSP}(\Gamma)$ is in $\mathrm{P}$.
+  In this case, $\Gamma$ possesses a non-trivial polymorphism.
+  \item\label{di:hard} $\mathrm{CSP}(\Gamma)$ is $\mathrm{NP}$-complete.
+\end{enumerate}
+There is no intermediate case.
+\end{theorem}
+
+Schaefer~\cite{Schaefer78} proved this dichotomy for Boolean domains; Bulatov and Zhuk independently proved it for all finite domains.
+
+\begin{definition}[Polymorphism; pp-definability]\label{def:polymorphism}
+A \emph{polymorphism} of a constraint language $\Gamma$ is a function $f\colon D^m \to D$ (for some $m \geq 1$) that preserves every relation in $\Gamma$: for all $R \in \Gamma$ and all tuples $t_1, \ldots, t_m \in R$, applying $f$ coordinate-wise yields a tuple in~$R$. A relation $R'$ is \emph{pp-definable} from $\Gamma$ if it can be expressed using constraints from $\Gamma$ together with conjunction and existential quantification.
+\end{definition}
+
+A tractable language is therefore characterized by non-trivial polymorphisms, and so cannot pp-define all relations on its domain.
+
+\begin{proposition}[Algebraic limitation of tractable languages; Bulatov, Jeavons \& Krokhin~\cite{BJK05}]\label{prop:algebra}
+If $\Gamma$ falls into case~\ref{di:tractable} of Theorem~\ref{thm:dichotomy}, then $\Gamma$ has a non-trivial polymorphism, and consequently $\Gamma$ cannot pp-define all relations on its domain.
+If $\Gamma$ could pp-define all relations, its polymorphism clone would consist only of projections, placing $\Gamma$ in case~\ref{di:hard}.
+\end{proposition}
+
+\begin{proposition}[Existence of unapproximable relations; Selman \& Kautz~\cite{SelmanKautz96}]\label{prop:unapprox-rep}
+For every tractable constraint language $\Gamma$ with non-trivial polymorphism $f$, there exists a relation $R^*$ on~$D$ such that the tightest $f$-closed over-approximation of $R^*$---the closest relation expressible from $\Gamma$---is the trivially true relation $D^{\mathrm{ar}(R^*)}$.
+In particular, $\Gamma$ approximates $R^*$ with zero information.
+\end{proposition}
+
+\begin{example}\label{ex:horn}
+Horn clauses cannot express the disjunction ``at least one of $x, y, z$ is true.'' The best Horn over-approximation of this constraint is the trivially true relation, capturing zero information about the constraint~\cite{SelmanKautz96}. Similarly, 2-SAT cannot express not-all-equal constraints, and affine constraints cannot express non-linear structure.
+\end{example}
+
+\begin{remark}[Approximation does not close the gap]\label{rem:approx-gap}
+Even if a limited system attempts to approximate excluded constraints, formal limits remain. \emph{Representation:} by Proposition~\ref{prop:unapprox-rep}, every tractable language misses some environment relations so badly that its tightest available over-approximation is uninformative. \emph{Solution:} Raghavendra~\cite{Raghavendra08} shows, assuming the Unique Games Conjecture, that the optimal efficient approximation ratio for any CSP is determined by the constraint type; for many natural predicates, that optimum is no better than random guessing. \emph{Compounding:} small local approximation errors can destroy global consistency, since slightly relaxing even one constraint in a uniquely solvable CSP can admit wholly wrong assignments.
+\end{remark}
+
+More generally, once the language is restricted for tractability, some environment relations fall outside its expressive closure, and in the worst case even the tightest available approximation carries zero information. A system that adopts such a language is therefore a specialist, not a general-purpose reasoner.
+
+\subsection{Parallelization}\label{sec:parallel}
+
+\begin{remark}[Serial coordination is irreducible]\label{rem:serial}
+Belief revision is non-monotonic: new observations can invalidate previous beliefs.
+The CALM Theorem~\cite{Hellerstein10} states that a distributed program has consistent, coordination-free execution if and only if it is monotonic.
+Consequently, belief revision requires a serial coordination phase, regardless of available parallelism.
+\end{remark}
+
+\begin{remark}[Gustafson scaling does not apply]\label{rem:gustafson}
+Gustafson's Law amortizes a serial fraction by scaling problem size with processor count.
+But if the system abandons bounded treewidth, the serial cost of CSP solving is exponential in the problem size.
+Maintaining a fixed serial fraction would require exponentially more compute for each linear increase in problem size.
+\end{remark}
+
+\subsection{Approximation}\label{sec:approx}
+
+\begin{remark}[Inapproximability forecloses approximate escape]\label{rem:inapprox}
+One might hope to escape the treewidth bound by performing approximate rather than exact inference.
+The results cited in \S\ref{sec:expressiveness} foreclose this route:
+\begin{enumerate}[nosep,label=(\roman*)]
+  \item H\aa stad~\cite{Hastad01}: for MAX-3SAT, it is NP-hard to achieve an approximation ratio better than $7/8$ (random guessing).
+  \item Raghavendra~\cite{Raghavendra08}: for every CSP (assuming the Unique Games Conjecture~\cite{Khot02}), the optimal efficient approximation ratio is determined by the constraint type alone.
+  \item Austrin and Mossel~\cite{AustrinMossel09}: a predicate~$P$ is \emph{approximation-resistant} (optimal efficient ratio = random assignment ratio) if and only if $P$ is implied by a pairwise-independent distribution.
+  \item Marx~\cite{Marx10}: under ETH, computational cost scales as $2^{\Omega(\mathrm{tw}(G)/\log \mathrm{tw}(G))}$---there is no smooth degradation.
+\end{enumerate}
+The critical consequence for agents in arbitrary environments is the following.
+An agent facing arbitrary environments will encounter constraints corresponding to arbitrary predicate types.
+Among these are predicates satisfying the Austrin--Mossel characterization---i.e., approximation-resistant predicates for which the best efficient approximation equals random guessing.
+A system that retains expressive constraints but accepts a fixed approximation ratio (say, 95\%) is betting that its environment will not present approximation-resistant predicates.
+In arbitrary environments, that bet fails: approximation-resistant predicates are a non-trivial subset of all predicates, and the environment is not constrained to avoid them.
+
+The full closure is therefore:
+\begin{itemize}[nosep]
+  \item \emph{Restricted constraint language} (\S\ref{sec:expressiveness}): the system cannot \emph{express} certain environmental relationships at all (Bulatov--Zhuk dichotomy).
+  \item \emph{Full constraint language + approximation}: the system can express everything but will encounter predicates it cannot solve better than random (Austrin--Mossel + Raghavendra, conditional on UGC).
+  \item \emph{Full constraint language + exact solving}: bounded treewidth is necessary (Grohe, conditional on $\mathrm{FPT} \neq \mathrm{W}[1]$).
+\end{itemize}
+Every exit from bounded treewidth costs the system something it needs: expressiveness, accuracy, or tractability.
+\end{remark}
+
+\begin{remark}[No general escape under the theorem hypotheses]\label{rem:no-escape}
+The logical status of the escape-route discussion is as follows.
+Under the hypotheses of Theorem~\ref{thm:main}, there is no general escape from the bounded-treewidth conclusion.
+Parallelization does not remove the serial coordination bottleneck (Remarks~\ref{rem:serial} and~\ref{rem:gustafson}); approximation with full expressiveness does not remove the hardness obstruction in arbitrary environments (Remark~\ref{rem:inapprox}); and restricting the constraint language sacrifices generality rather than refuting the theorem.
+Thus the only apparent escapes either fail within the stated scope or leave that scope by sacrificing one of the theorem's standing assumptions, namely general expressiveness, tractability, or serial embodied execution.
+\end{remark}
+
+%% ========================================================================
+\section{Discussion and Implications}\label{sec:discussion}
+
+The main result is a structural ceiling, not an algorithm-specific performance claim. Any substrate that supports uniform tractable belief revision over arbitrary relations must organize its dependency structure so that self-consistent serialized behavior lies in a $(k{+}1)$-MCFL. This applies equally to classical, neural, and biological implementations, because the argument depends only on constraint structure, treewidth, and the need to linearize behavior in time. The associated design trilemma is therefore structural: keep full expressiveness and tractability, and bounded treewidth follows; keep full expressiveness and unbounded treewidth, and inference becomes intractable; keep tractability without bounded treewidth, and the system must specialize to a restricted constraint language.
+
+Combined with Rodriguez and Granger's analysis of thalamocortical computation~\cite{Rodriguez16}, humans may exist at a natural qualitative ceiling in intelligence.
+
+Just as important are the limits of the claim. The theorem constrains self-consistent behavior grounded in satisfying assignments, not arbitrary inconsistent action traces. It classifies the language-theoretic complexity of behavior, not its utility, content, or exact runtime on a specific instance. And it relies on the full-expressiveness condition: systems that restrict themselves to Horn, 2-SAT, affine, or similarly special languages may avoid the treewidth bound only by sacrificing faithful representation of arbitrary environments. Within the theorem's scope, however, the inference bottleneck is not a modeling artifact but a genuine structural limit.
+
+%% ========================================================================
+\begin{credits}
+\subsubsection{\discintname}
+The author has no competing interests to declare that are relevant to the content of this article.
+\end{credits}
+
+%% ========================================================================
+% BibTeX users should specify bibliography style 'splncs04'.
+% \bibliographystyle{splncs04}
+% \bibliography{references}
+%
+\begin{thebibliography}{22}
+
+\bibitem{AustrinMossel09}
+Austrin, P., Mossel, E.: Approximation resistant predicates from pairwise independence. Comput. Complex. \textbf{18}(2), 249--271 (2009)
+
+\bibitem{BJK05}
+Bulatov, A., Jeavons, P., Krokhin, A.: Classifying the complexity of constraints using finite algebras. SIAM J. Comput. \textbf{34}(3), 720--742 (2005)
+
+\bibitem{Bulatov17}
+Bulatov, A.: A dichotomy theorem for nonuniform CSPs. In: 58th Annual IEEE Symposium on Foundations of Computer Science (FOCS), pp. 319--330 (2017)
+
+\bibitem{Engelfriet97}
+Engelfriet, J.: Context-free graph grammars. In: Rozenberg, G., Salomaa, A. (eds.) Handbook of Formal Languages, vol. 3, pp. 125--213. Springer (1997)
+
+\bibitem{Grohe07}
+Grohe, M.: The complexity of homomorphism and constraint satisfaction problems seen from the other side. J. ACM \textbf{54}(1), 1--24 (2007)
+
+\bibitem{Habel92}
+Habel, A.: Hyperedge Replacement: Grammars and Languages. LNCS, vol. 643. Springer (1992)
+
+\bibitem{Hastad01}
+H\aa stad, J.: Some optimal inapproximability results. J. ACM \textbf{48}(4), 798--859 (2001)
+
+\bibitem{Hellerstein10}
+Hellerstein, J.M.: The declarative imperative: experiences and conjectures in distributed logic. SIGMOD Rec. \textbf{39}(1), 5--19 (2010)
+
+\bibitem{HolzerKutrib11}
+Holzer, M., Kutrib, M.: Descriptional complexity --- an introductory survey. In: Mart\'in-Vide, C. (ed.) Scientific Applications of Language Methods, pp. 1--58. Imperial College Press (2011)
+
+\bibitem{Khot02}
+Khot, S.: On the power of unique 2-prover 1-round games. In: 34th Annual ACM Symposium on Theory of Computing (STOC), pp. 767--775 (2002)
+
+\bibitem{Marx10}
+Marx, D.: Can you beat treewidth? Theory Comput. \textbf{6}(1), 85--112 (2010)
+
+\bibitem{Raghavendra08}
+Raghavendra, P.: Optimal algorithms and inapproximability results for every CSP? In: 40th Annual ACM Symposium on Theory of Computing (STOC), pp. 245--254 (2008)
+
+\bibitem{Rodriguez16}
+Rodriguez, P., Granger, R.: The grammar of mammalian brain capacity. Theor. Comput. Sci. \textbf{633}, 63--83 (2016)
+
+\bibitem{Schaefer78}
+Schaefer, T.J.: The complexity of satisfiability problems. In: 10th Annual ACM Symposium on Theory of Computing (STOC), pp. 216--226 (1978)
+
+\bibitem{Seki91}
+Seki, H., Matsumura, T., Fujii, M., Kasami, T.: On multiple context-free grammars. Theor. Comput. Sci. \textbf{88}(2), 191--229 (1991)
+
+\bibitem{SelmanKautz96}
+Selman, B., Kautz, H.: Knowledge compilation and theory approximation. J. ACM \textbf{43}(2), 193--224 (1996)
+
+\bibitem{Zhuk20}
+Zhuk, D.: A proof of the CSP dichotomy conjecture. J. ACM \textbf{67}(5), 1--78 (2020)
+
+\end{thebibliography}
+
+\end{document}

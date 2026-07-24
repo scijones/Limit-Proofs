@@ -1,0 +1,2948 @@
+{
+ "csp": {
+  "widths": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "Ts": [
+   6,
+   12,
+   24
+  ],
+  "m": 12,
+  "c": 6,
+  "p_grid": [
+   0.16,
+   0.22,
+   0.28,
+   0.34,
+   0.4,
+   0.46,
+   0.52,
+   0.58
+  ],
+  "node_cap": 300000,
+  "runs": {
+   "T6_w1": {
+    "by_p": {
+     "0.16": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 72.0,
+    "censored_frac": 0.0,
+    "sat_frac": 1.0,
+    "be_median": 1872.0,
+    "be_verdicts_agree": true
+   },
+   "T6_w2": {
+    "by_p": {
+     "0.16": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 72.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 73.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 74.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 73.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 75.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 76.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 80.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.58,
+    "median": 80.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.8888888888888888,
+    "be_median": 11448.0,
+    "be_verdicts_agree": true
+   },
+   "T6_w3": {
+    "by_p": {
+     "0.16": {
+      "median": 73.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 75.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 78.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 87.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 88.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 99.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 161.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.4444444444444444,
+      "sats": [
+       true,
+       false,
+       false,
+       true,
+       false,
+       false,
+       true,
+       true,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 183.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.1111111111111111,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       true,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.58,
+    "median": 183.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.1111111111111111,
+    "be_median": 74304.0,
+    "be_verdicts_agree": true
+   },
+   "T6_w4": {
+    "by_p": {
+     "0.16": {
+      "median": 76.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 92.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 126.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 271.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.5555555555555556,
+      "sats": [
+       false,
+       true,
+       false,
+       true,
+       false,
+       true,
+       true,
+       false,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 455.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.3333333333333333,
+      "sats": [
+       false,
+       true,
+       false,
+       true,
+       false,
+       true,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 234.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 112.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 99.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.4,
+    "median": 455.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.3333333333333333,
+    "be_median": 486000.0,
+    "be_verdicts_agree": true
+   },
+   "T6_w5": {
+    "by_p": {
+     "0.16": {
+      "median": 147.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 170.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 578.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.2222222222222222,
+      "sats": [
+       true,
+       false,
+       false,
+       false,
+       true,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 161.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 122.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 61.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 55.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 48.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.28,
+    "median": 578.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.2222222222222222,
+    "be_median": 2643840.0,
+    "be_verdicts_agree": true
+   },
+   "T6_w6": {
+    "by_p": {
+     "0.16": {
+      "median": 5045.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 3201.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.1111111111111111,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 274.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 84.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 61.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 57.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 51.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 48.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 5045.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.8888888888888888,
+    "be_median": 20621952.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w1": {
+    "by_p": {
+     "0.16": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 144.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 144.0,
+    "censored_frac": 0.0,
+    "sat_frac": 1.0,
+    "be_median": 4032.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w2": {
+    "by_p": {
+     "0.16": {
+      "median": 145.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 145.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 147.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 147.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 150.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 153.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 161.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 166.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       false,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.58,
+    "median": 166.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.8888888888888888,
+    "be_median": 24408.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w3": {
+    "by_p": {
+     "0.16": {
+      "median": 148.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 156.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 165.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 177.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 199.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 219.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.5555555555555556,
+      "sats": [
+       true,
+       true,
+       false,
+       false,
+       false,
+       true,
+       false,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 336.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.5555555555555556,
+      "sats": [
+       true,
+       true,
+       false,
+       false,
+       false,
+       true,
+       false,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 245.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.1111111111111111,
+      "sats": [
+       true,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.52,
+    "median": 336.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.5555555555555556,
+    "be_median": 157248.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w4": {
+    "by_p": {
+     "0.16": {
+      "median": 158.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 198.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 268.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 596.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 739.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 273.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 190.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 141.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.4,
+    "median": 739.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.0,
+    "be_median": 903312.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w5": {
+    "by_p": {
+     "0.16": {
+      "median": 1977.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       null,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 1889.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 7449.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.1111111111111111,
+      "sats": [
+       false,
+       false,
+       true,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 172.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 102.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 85.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 82.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 79.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.28,
+    "median": 7449.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.1111111111111111,
+    "be_median": 4813344.0,
+    "be_verdicts_agree": true
+   },
+   "T12_w6": {
+    "by_p": {
+     "0.16": {
+      "median": 300000.0,
+      "censored_frac": 0.8888888888888888,
+      "sat_frac": 1.0,
+      "sats": [
+       null,
+       true,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "0.22": {
+      "median": 141300.0,
+      "censored_frac": 0.4444444444444444,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       null,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.28": {
+      "median": 1413.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 163.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 128.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 108.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 101.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 96.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 300000.0,
+    "censored_frac": 0.8888888888888888,
+    "sat_frac": 1.0,
+    "be_median": 43016832.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w1": {
+    "by_p": {
+     "0.16": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 288.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 288.0,
+    "censored_frac": 0.0,
+    "sat_frac": 1.0,
+    "be_median": 8352.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w2": {
+    "by_p": {
+     "0.16": {
+      "median": 290.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 295.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 297.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 299.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 302.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 313.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.52": {
+      "median": 328.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.58": {
+      "median": 344.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     }
+    },
+    "peak_p": 0.58,
+    "median": 344.0,
+    "censored_frac": 0.0,
+    "sat_frac": 1.0,
+    "be_median": 50328.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w3": {
+    "by_p": {
+     "0.16": {
+      "median": 296.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 315.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 324.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 0.875,
+      "sats": [
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       null,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 563.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 0.8888888888888888,
+      "sats": [
+       true,
+       true,
+       false,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.4": {
+      "median": 407.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 0.7777777777777778,
+      "sats": [
+       true,
+       false,
+       false,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.46": {
+      "median": 555.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 0.5555555555555556,
+      "sats": [
+       false,
+       false,
+       false,
+       true,
+       true,
+       true,
+       true,
+       true,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 733.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.2222222222222222,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       true,
+       false,
+       true,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 562.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.52,
+    "median": 733.0,
+    "censored_frac": 0.0,
+    "sat_frac": 0.2222222222222222,
+    "be_median": 316224.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w4": {
+    "by_p": {
+     "0.16": {
+      "median": 326.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       null,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 2580.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 1232.0,
+      "censored_frac": 0.0,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true
+      ]
+     },
+     "0.34": {
+      "median": 3297.0,
+      "censored_frac": 0.2222222222222222,
+      "sat_frac": 0.3333333333333333,
+      "sats": [
+       true,
+       false,
+       false,
+       true,
+       false,
+       false,
+       false,
+       true,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 605.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 387.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 309.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 285.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.34,
+    "median": 3297.0,
+    "censored_frac": 0.2222222222222222,
+    "sat_frac": 0.3333333333333333,
+    "be_median": 2095632.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w5": {
+    "by_p": {
+     "0.16": {
+      "median": 859.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 1.0,
+      "sats": [
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       true,
+       null,
+       true
+      ]
+     },
+     "0.22": {
+      "median": 42961.0,
+      "censored_frac": 0.4444444444444444,
+      "sat_frac": 0.8333333333333334,
+      "sats": [
+       true,
+       null,
+       true,
+       false,
+       true,
+       null,
+       true,
+       null,
+       true
+      ]
+     },
+     "0.28": {
+      "median": 172843.0,
+      "censored_frac": 0.3333333333333333,
+      "sat_frac": 0.0,
+      "sats": [
+       null,
+       null,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 329.0,
+      "censored_frac": 0.1111111111111111,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 189.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 162.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 132.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 127.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.28,
+    "median": 172843.0,
+    "censored_frac": 0.3333333333333333,
+    "sat_frac": 0.0,
+    "be_median": 7464960.0,
+    "be_verdicts_agree": true
+   },
+   "T24_w6": {
+    "by_p": {
+     "0.16": {
+      "median": 300000.0,
+      "censored_frac": 0.8888888888888888,
+      "sat_frac": 1.0,
+      "sats": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       true,
+       null
+      ]
+     },
+     "0.22": {
+      "median": 300000.0,
+      "censored_frac": 1.0,
+      "sat_frac": 0.0,
+      "sats": [
+       null,
+       false,
+       null,
+       null,
+       null,
+       null,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.28": {
+      "median": 122445.0,
+      "censored_frac": 0.3333333333333333,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       null,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.34": {
+      "median": 404.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.4": {
+      "median": 246.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.46": {
+      "median": 201.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.52": {
+      "median": 192.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     },
+     "0.58": {
+      "median": 182.0,
+      "censored_frac": 0.0,
+      "sat_frac": 0.0,
+      "sats": [
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false,
+       false
+      ]
+     }
+    },
+    "peak_p": 0.16,
+    "median": 300000.0,
+    "censored_frac": 0.8888888888888888,
+    "sat_frac": 1.0,
+    "be_median": 87806592.0,
+    "be_verdicts_agree": true
+   }
+  }
+ },
+ "cap": {
+  "demands": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "kappas": [
+   2,
+   4,
+   6,
+   "inf"
+  ],
+  "q": 8,
+  "n_pairs": 300,
+  "instances": 40,
+  "curves": {
+   "2": {
+    "mean": [
+     1.0,
+     2.0,
+     2.0,
+     2.025,
+     2.075,
+     2.1,
+     2.25,
+     2.125
+    ],
+    "lo": [
+     1.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0
+    ],
+    "hi": [
+     1.0,
+     2.0,
+     2.0,
+     2.0,
+     2.0,
+     2.1000000000000014,
+     3.0,
+     3.0
+    ]
+   },
+   "4": {
+    "mean": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     4.0,
+     4.6,
+     4.65,
+     4.6
+    ],
+    "lo": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     4.0,
+     4.0,
+     4.0,
+     4.0
+    ],
+    "hi": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     4.0,
+     5.0,
+     5.0,
+     5.0
+    ]
+   },
+   "6": {
+    "mean": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     6.075,
+     6.9
+    ],
+    "lo": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     6.0,
+     6.9
+    ],
+    "hi": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     6.0,
+     7.0
+    ]
+   },
+   "inf": {
+    "mean": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0
+    ],
+    "lo": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0
+    ],
+    "hi": [
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0
+    ]
+   }
+  },
+  "sat": {
+   "3": {
+    "kappas": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "mean": [
+     0.5138333333333334,
+     0.7945833333333333,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "lo": [
+     0.4866666666666667,
+     0.77,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "hi": [
+     0.5403333333333333,
+     0.8143333333333334,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "5": {
+    "kappas": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "mean": [
+     0.39125,
+     0.5945833333333334,
+     0.7634166666666667,
+     0.8989166666666666,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "lo": [
+     0.3566666666666667,
+     0.5456666666666666,
+     0.7326666666666666,
+     0.88,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "hi": [
+     0.43333333333333335,
+     0.6366666666666667,
+     0.794,
+     0.9206666666666667,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "7": {
+    "kappas": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "mean": [
+     0.3218333333333333,
+     0.5001666666666666,
+     0.6394166666666667,
+     0.7586666666666666,
+     0.85125,
+     0.9284166666666668,
+     1.0,
+     1.0
+    ],
+    "lo": [
+     0.28633333333333333,
+     0.45766666666666667,
+     0.5933333333333334,
+     0.7256666666666667,
+     0.8166666666666667,
+     0.9,
+     1.0,
+     1.0
+    ],
+    "hi": [
+     0.36733333333333335,
+     0.567,
+     0.7,
+     0.7936666666666666,
+     0.8833333333333333,
+     0.95,
+     1.0,
+     1.0
+    ]
+   }
+  }
+ },
+ "rl": {
+  "budget": 25000,
+  "orders": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "demands": [
+   1,
+   2,
+   3
+  ],
+  "opt_len": {
+   "1": 14,
+   "2": 23,
+   "3": 23
+  },
+  "runs": {
+   "d1_k1": {
+    "episodes": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "median": 25000.0,
+    "success_frac": 0.0
+   },
+   "d1_k2": {
+    "episodes": [
+     500,
+     250,
+     250,
+     500,
+     500
+    ],
+    "median": 500.0,
+    "success_frac": 1.0
+   },
+   "d1_k3": {
+    "episodes": [
+     500,
+     250,
+     250,
+     500,
+     250
+    ],
+    "median": 250.0,
+    "success_frac": 1.0
+   },
+   "d1_k4": {
+    "episodes": [
+     500,
+     250,
+     250,
+     250,
+     250
+    ],
+    "median": 250.0,
+    "success_frac": 1.0
+   },
+   "d2_k1": {
+    "episodes": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "median": 25000.0,
+    "success_frac": 0.0
+   },
+   "d2_k2": {
+    "episodes": [
+     3000,
+     3750,
+     1750,
+     2500,
+     1500
+    ],
+    "median": 2500.0,
+    "success_frac": 1.0
+   },
+   "d2_k3": {
+    "episodes": [
+     1250,
+     1000,
+     1000,
+     1750,
+     1750
+    ],
+    "median": 1250.0,
+    "success_frac": 1.0
+   },
+   "d2_k4": {
+    "episodes": [
+     2000,
+     1000,
+     750,
+     4750,
+     3500
+    ],
+    "median": 2000.0,
+    "success_frac": 1.0
+   },
+   "d3_k1": {
+    "episodes": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "median": 25000.0,
+    "success_frac": 0.0
+   },
+   "d3_k2": {
+    "episodes": [
+     9000,
+     6250,
+     8000,
+     9750,
+     4500
+    ],
+    "median": 8000.0,
+    "success_frac": 1.0
+   },
+   "d3_k3": {
+    "episodes": [
+     1750,
+     2500,
+     8250,
+     2250,
+     1500
+    ],
+    "median": 2250.0,
+    "success_frac": 1.0
+   },
+   "d3_k4": {
+    "episodes": [
+     2250,
+     2500,
+     1750,
+     2500,
+     2000
+    ],
+    "median": 2250.0,
+    "success_frac": 1.0
+   }
+  }
+ }
+}

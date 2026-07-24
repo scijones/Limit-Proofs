@@ -37,12 +37,18 @@ structure MCFGProduction (Sym : Type*) (N : Type*) (ar : N → ℕ) where
       RHS nonterminal. -/
   rhs_arities : ∀ (i : Fin rhs.length),
     (rhs_vars.get (i.cast rhs_len.symm)).length = ar (rhs.get i)
-  /-- Every variable index referenced on the LHS must be declared on the RHS.
-      Without this, the derivation rule's η could smuggle string material
-      through indices unbound to any subderivation, decoupling grammar
-      dimension from the tree-decomposition width the bound relies on. -/
+  /-- Variables naming RHS components are pairwise distinct. -/
+  rhs_vars_nodup : rhs_vars.flatten.Nodup
+  /-- Every variable index referenced on the LHS must be declared on the RHS. -/
   lhs_indices_bounded : ∀ s ∈ lhs_strings, ∀ x : ℕ, (Sum.inr x : Sym ⊕ ℕ) ∈ s →
     x ∈ rhs_vars.flatten
+  /-- The production is linear (copyless): across all output components, each
+      RHS variable is used at most once.  This is essential to the standard
+      definition of an MCFG/LCFRS production. -/
+  lhs_vars_nodup :
+    (lhs_strings.flatten.filterMap (fun c => match c with
+      | Sum.inl _ => none
+      | Sum.inr x => some x)).Nodup
 
 /-- A multiple context-free grammar.
 (Definition 6.1) -/
