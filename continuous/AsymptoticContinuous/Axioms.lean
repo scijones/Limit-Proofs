@@ -36,11 +36,20 @@ rate constraint is now stated in capacity (MI) form directly in
 `ContinuousSystem.rate_bound`, so the remaining information-theoretic
 trust base is valid for genuinely continuous random variables.
 
-## Graph theory (1)
+## Graph theory (0 — formerly 1)
 
-| Axiom                              | Source               |
-|------------------------------------|----------------------|
-| `separator_existence_from_treewidth` | Diestel (2017), Ch 12 |
+DELETED (**false as stated**): `separator_existence_from_treewidth`
+claimed that treewidth ≤ k yields a size-(k+1) separator between
+*arbitrary* coordinate sets.  Counterexample: the path P₆ (treewidth 1)
+with A = odd, B = even vertices requires a vertex cover (size ≥ 3).
+Treewidth does not bound the observation–action cut when the sets
+interleave.  The true statement — a subtree boundary of size ≤ k+1
+separates the two sides of any node of a decomposition — is now **proved**
+in `Basic/Separator.lean` (`boundary_card_le`, `boundary_separates`), and
+the throughput theorem consumes it through the explicit
+`ContinuousSystem.InterfaceSeparated` hypothesis.  The unconditional
+bounds `throughput_cut_bound` and `throughput_le_sensor_capacity` hold
+for every system with no placement hypothesis.
 
 ## Statistical characterization — per-instance (4 axioms)
 

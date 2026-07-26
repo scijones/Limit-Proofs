@@ -9,7 +9,12 @@ import AsymptoticContinuous.Axioms
 
 Four class-level corollaries, each concluding that a recursively enumerable
 class of continuous inference systems satisfying appropriate hypotheses has
-uniformly bounded treewidth and throughput ≤ (k+1)·R_max.
+uniformly bounded treewidth; and, for every member whose sensor and
+effector coordinate sets are separated by a node of a width-≤k
+decomposition (`InterfaceSeparated`), throughput ≤ (k+1)·R_max.  The
+unconditional bounds `throughput_cut_bound` and
+`throughput_le_sensor_capacity` (Agent/Throughput.lean) apply to every
+member with no placement hypothesis.
 
 - **`class_main_exact`** (Corollary 7.9(a)): PKD route — exact sufficiency +
   independent support + tractable partition function.
@@ -53,14 +58,15 @@ theorem class_main_exact (h_conj : FPT_ne_SharpW1)
     (h_tract : 𝓢.AllTractablePartition) :
     ∃ k : ℕ, ∀ sys ∈ 𝓢,
       sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
+      (sys.InterfaceSeparated k →
+        sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max) := by
   -- Step 1: PKD lifts to the class level (requires IndependentSupport)
   have h_exp : 𝓢.AllExponentialFamily :=
     𝓢.allExactSufficiency_implies_allExpFamily h_exact h_supp
   -- Step 2: Class-level necessity gives uniform treewidth bound
   obtain ⟨k, hk⟩ := class_partition_exact_necessity h_conj 𝓢 h_re h_exp h_tract
   -- Step 3: Per-instance throughput bound for each member
-  exact ⟨k, fun sys hs => ⟨hk sys hs, throughput_rate_bound sys k (hk sys hs)⟩⟩
+  exact ⟨k, fun sys hs => ⟨hk sys hs, fun hsep => throughput_rate_bound sys k hsep⟩⟩
 
 /-- **Corollary 7.9(b), class version: Full approximate-inference pipeline.**
 
@@ -86,14 +92,15 @@ theorem class_main_approx (h_eth : ETH)
     (h_tract : 𝓢.AllTractableApproxPartition) :
     ∃ k : ℕ, ∀ sys ∈ 𝓢,
       sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
+      (sys.InterfaceSeparated k →
+        sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max) := by
   -- Step 1: BvM lifts to the class level (via DQM)
   have h_exp : 𝓢.AllAsymptoticExpFamily :=
     𝓢.allBvMConditions_implies_allAsymptoticExpFamily h_fisher h_dqm h_prior
   -- Step 2: Class-level necessity gives uniform treewidth bound
   obtain ⟨k, hk⟩ := class_partition_approx_necessity h_eth 𝓢 h_re h_exp h_tract
   -- Step 3: Per-instance throughput bound for each member
-  exact ⟨k, fun sys hs => ⟨hk sys hs, throughput_rate_bound sys k (hk sys hs)⟩⟩
+  exact ⟨k, fun sys hs => ⟨hk sys hs, fun hsep => throughput_rate_bound sys k hsep⟩⟩
 
 /-! ## Class-level corollary: singular models -/
 
@@ -139,14 +146,15 @@ theorem class_main_singular (h_eth : ETH)
     (h_opt : 𝓢.AllTractableWatanabeOptimal) :
     ∃ k : ℕ, ∀ sys ∈ 𝓢,
       sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
+      (sys.InterfaceSeparated k →
+        sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max) := by
   -- Step 1: Watanabe backward reduction: success + latents → tractable Z
   have h_tract : 𝓢.AllTractableApproxPartition :=
     𝓢.allWatanabe_implies_allTractableApproxPartition h_lat h_opt
   -- Step 2: General necessity (Marx): tractable Z across class → bounded tw
   obtain ⟨k, hk⟩ := class_partition_general_necessity h_eth 𝓢 h_re h_tract
   -- Step 3: Per-instance throughput bound for each member (already proved)
-  exact ⟨k, fun sys hs => ⟨hk sys hs, throughput_rate_bound sys k (hk sys hs)⟩⟩
+  exact ⟨k, fun sys hs => ⟨hk sys hs, fun hsep => throughput_rate_bound sys k hsep⟩⟩
 
 /-! ## Class-level corollary: fully observed comparative revision -/
 
@@ -177,14 +185,15 @@ theorem class_main_comparative (h_eth : ETH)
     (h_anchor : 𝓢.AllPartitionAnchors) :
     ∃ k : ℕ, ∀ sys ∈ 𝓢,
       sys.G_eff.HasTreewidthAtMost k ∧
-      sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max := by
+      (sys.InterfaceSeparated k →
+        sys.throughput ≤ (↑(k + 1) : ℝ) * sys.R_max) := by
   -- Step 1: Comparative revision + anchor → tractable Z
   have h_tract : 𝓢.AllTractableApproxPartition :=
     𝓢.allComparativeRevision_implies_allTractableApproxPartition h_obs h_cmp h_anchor
   -- Step 2: General necessity (Marx): tractable Z across class → bounded tw
   obtain ⟨k, hk⟩ := class_partition_general_necessity h_eth 𝓢 h_re h_tract
   -- Step 3: Per-instance throughput bound for each member
-  exact ⟨k, fun sys hs => ⟨hk sys hs, throughput_rate_bound sys k (hk sys hs)⟩⟩
+  exact ⟨k, fun sys hs => ⟨hk sys hs, fun hsep => throughput_rate_bound sys k hsep⟩⟩
 
 /-! ## Per-instance corollaries: DELETED
 

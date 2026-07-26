@@ -3,6 +3,7 @@ Copyright (c) 2026 Steven J. Jones. All rights reserved.
 Released under the MIT license as described in the file LICENSE.
 -/
 import AsymptoticContinuous.Basic.Graph
+import AsymptoticContinuous.Basic.Separator
 import AsymptoticContinuous.InformationTheory.Axioms
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
@@ -17,24 +18,24 @@ ALREADY a per-instance type — no analogue of the discrete's
 
 ## Main definitions
 
-* `SimpleGraph.IsSeparatingSet` — vertex separator between two sets
 * `ContinuousSystem` — structure encoding Axioms 1–4 + rate structure
 * `ContinuousSystem.throughput` — instantaneous information throughput I(t)
 * `ContinuousSystem.R_max` — max per-coordinate information rate
+* `ContinuousSystem.InterfaceSeparated` — the observation and action
+  coordinate sets lie on opposite sides of some node of a width-≤k tree
+  decomposition of `G_eff`
+
+The former axiom `separator_existence_from_treewidth` — which asserted a
+size-(k+1) separator between **arbitrary** coordinate sets in any graph of
+treewidth ≤ k — was **false** (see `Basic/Separator.lean` for the
+counterexample) and has been deleted.  The true statement, that a subtree
+boundary of size ≤ k+1 separates the two sides of any node of a
+decomposition, is now **proved** in `Basic/Separator.lean`, and the
+throughput theorem consumes it through the explicit `InterfaceSeparated`
+hypothesis.
 -/
 
 set_option autoImplicit false
-
-def SimpleGraph.IsSeparatingSet {V : Type*} [DecidableEq V]
-    (G : SimpleGraph V) (A B C : Finset V) : Prop :=
-  ∀ u ∈ A \ C, ∀ v ∈ B \ C, ∀ (p : G.Walk u v),
-    ∃ w, w ∈ C ∧ w ∈ p.support
-
-axiom separator_existence_from_treewidth
-    {V : Type*} [DecidableEq V] [Fintype V]
-    (G : SimpleGraph V) (A B : Finset V) (k : ℕ)
-    (htw : G.HasTreewidthAtMost k) :
-    ∃ C : Finset V, C.card ≤ k + 1 ∧ G.IsSeparatingSet A B C
 
 structure ContinuousSystem where
   N : ℕ
@@ -80,6 +81,30 @@ theorem ContinuousSystem.le_R_max (sys : ContinuousSystem)
 theorem ContinuousSystem.R_max_nonneg (sys : ContinuousSystem) :
     0 ≤ sys.R_max :=
   le_trans (sys.hR_nonneg ⟨0, sys.hN⟩) (sys.le_R_max ⟨0, sys.hN⟩)
+
+/-- **Interface separation.**  The observation coordinates lie below some
+node `t` of a width-≤`k` rooted tree decomposition of `G_eff`, and the
+action coordinates lie outside the subtree at `t` (any action coordinate
+appearing below `t` must be on the boundary).  Physically: sensors and
+effectors are distinct interfaces mediated by internal state.
+
+This is a genuine additional hypothesis, stated explicitly rather than
+built into the structure: treewidth alone does **not** bound the cut
+between arbitrary coordinate sets (see `Basic/Separator.lean`).  For
+systems without it, the unconditional bounds `throughput_cut_bound` and
+`throughput_le_sensor_capacity` still apply. -/
+def ContinuousSystem.InterfaceSeparated (sys : ContinuousSystem) (k : ℕ) : Prop :=
+  ∃ (td : TreeDecomposition sys.G_eff), td.width ≤ k ∧
+    ∃ (r t : td.I),
+      sys.V_O ⊆ td.vertsBelow r t ∧
+      ∀ v ∈ sys.V_A, v ∈ td.vertsBelow r t → v ∈ td.boundary r t
+
+/-- Interface separation at width `k` witnesses `tw(G_eff) ≤ k`. -/
+theorem ContinuousSystem.InterfaceSeparated.hasTreewidthAtMost
+    {sys : ContinuousSystem} {k : ℕ}
+    (h : sys.InterfaceSeparated k) : sys.G_eff.HasTreewidthAtMost k := by
+  obtain ⟨td, hw, -⟩ := h
+  exact ⟨td, hw⟩
 
 /-! ## Partition function tractability predicates
 
