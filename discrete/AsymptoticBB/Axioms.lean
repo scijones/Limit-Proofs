@@ -7,6 +7,7 @@ import AsymptoticBB.Basic.SizedInstances
 import AsymptoticBB.TreeDecomposition.Defs
 import AsymptoticBB.TreeDecomposition.Boundary
 import AsymptoticBB.Grammars.Union
+import AsymptoticBB.Grammars.TCO
 import AsymptoticBB.Agent.Defs
 import AsymptoticBB.Agent.Tractability
 
@@ -20,16 +21,16 @@ This module declares the external results cited by the proof:
   bounded-arity core hypergraphs implies uniformly bounded treewidth.
   Operates on `SizedHypergraph` so different class members can have
   different vertex-set sizes, making the uniform bound non-trivial.
-- **`IsTreeCompatibleOrdering`**: Axiomatized predicate for the structured
-  yields of a rooted tree decomposition — the orderings that respect the
-  tree's bag-separation structure.
-- **`StructuredMCFG` / `engelfriet_tw_to_mcfl`**: Engelfriet's construction
-  (1997) — given a tree decomposition of width ≤ k, produces a (k+1)-MCFG
-  whose language is exactly the set of tree-compatible orderings.
 - **`mcfg_homomorphic_image`**: A single homomorphic image preserves
-  dimension.
-- **`mcfg_finite_union`**: finitely many languages in the same MCFG tier can
-  be stitched by union without increasing the tier.
+  dimension (Seki et al. 1991).
+
+The former external assumptions `IsTreeCompatibleOrdering`,
+`isTreeCompatibleOrdering_spec`, `isTreeCompatibleOrdering_nonempty`, and
+`engelfriet_tw_to_mcfl` are **no longer axioms**: they are now a concrete
+definition and machine-checked theorems in `AsymptoticBB.Grammars.TCO`
+(imported above), which constructs the tree-compatible-ordering grammar
+explicitly.  `mcfg_finite_union` is likewise a proved theorem
+(`AsymptoticBB.Grammars.Union`).
 -/
 
 set_option autoImplicit false
@@ -86,91 +87,19 @@ axiom thm_grohe :
 
 /-! ## Tree-Compatible Orderings -/
 
-/-- A predicate characterizing the "structured yields" of a rooted tree
-decomposition. These are linearizations of the vertices of H that respect
-the tree decomposition's bag structure — the exact orderings that the
-Engelfriet MCFG construction generates.
+/-! ## Former Engelfriet interface — now proved
 
-Intuitively, a tree-compatible ordering processes the tree nodes in some
-traversal order, outputting each vertex when its "home" bag is reached.
-The resulting linearization respects the tree's separation structure:
-vertices in different subtrees are separated by vertices in the separator
-(boundary) bags. A formal characterization would require defining tree
-traversals and vertex-to-bag assignments; since we axiomatize the entire
-Engelfriet construction, we axiomatize this predicate alongside it. -/
-axiom IsTreeCompatibleOrdering : ∀ {V : Type*} [DecidableEq V] [Fintype V]
-    {H : Hypergraph V} (td : TreeDecomposition H) (r : td.I)
-    (perm : List V), Prop
-
-/-- Tree-compatible orderings are nodup permutations of H.verts.
-This is a basic coherence property: any structured yield lists each vertex
-exactly once and covers all vertices. -/
-axiom isTreeCompatibleOrdering_spec : ∀ {V : Type*} [DecidableEq V] [Fintype V]
-    {H : Hypergraph V} {td : TreeDecomposition H} {r : td.I}
-    {perm : List V},
-    IsTreeCompatibleOrdering td r perm →
-    perm.toFinset = H.verts ∧ perm.Nodup
-
-/-- Every tree decomposition admits at least one tree-compatible ordering.
-This follows from the fact that any rooted tree has at least one valid
-traversal, and any traversal yields a structured linearization. -/
-axiom isTreeCompatibleOrdering_nonempty : ∀ {V : Type*} [DecidableEq V] [Fintype V]
-    {H : Hypergraph V} (td : TreeDecomposition H) (r : td.I),
-    ∃ (perm : List V), IsTreeCompatibleOrdering td r perm
-
-/-! ## Engelfriet Structure Theorems -/
-
-/-- Theorems 5.8 + 5.9 (Engelfriet 1997, Habel 1992, Aiswarya et al. 2026).
-
-Per-instance axiom. Given one hypergraph H with a tree decomposition,
-produces a structured MCFG whose language is exactly the set of
-tree-compatible orderings of H's vertices.
-
-When used in the main theorem:
-- Grohe gives a uniform k and per-agent treewidth bounds
-- For each specific agent with V = Fin n, we apply this axiom
-- The axiom sees V = Fin n, [DecidableEq (Fin n)], [Fintype (Fin n)] — automatic
-
-The grammar's language satisfies:
-- `lang_complete`: every tree-compatible ordering is generated
-- `lang_sound`: everything generated is a tree-compatible ordering
-  (with toFinset = H.verts and Nodup)
-- Together: L(grammar) = { tree-compatible orderings of H.verts } -/
-structure StructuredMCFG {V : Type*} [DecidableEq V] [Fintype V]
-    {H : Hypergraph V}
-    (td : TreeDecomposition H) (r : td.I) where
-  grammar : MCFG V
-  node : grammar.N → td.I
-  start_node : node grammar.S = r
-  arity_eq : ∀ A : grammar.N, grammar.ar A = max 1 (td.boundary r (node A)).card
-  terminals_in_bag : ∀ (p : MCFGProduction V grammar.N grammar.ar)
-    (_ : p ∈ grammar.productions),
-    ∀ (s : List (V ⊕ ℕ)) (_ : s ∈ p.lhs_strings)
-      (v : V) (_ : Sum.inl v ∈ s),
-      v ∈ td.bag (node p.lhs)
-  rhs_are_children : ∀ (p : MCFGProduction V grammar.N grammar.ar)
-    (_ : p ∈ grammar.productions)
-    (i : Fin p.rhs.length),
-    node (p.rhs.get i) ∈ td.children r (node p.lhs)
-  /-- Completeness: every tree-compatible ordering is generated.
-  The grammar produces all orderings consistent with the tree
-  decomposition's bag structure. -/
-  lang_complete : ∀ (perm : List V),
-    IsTreeCompatibleOrdering td r perm →
-    perm ∈ grammar.Language
-  /-- Soundness: everything generated is a tree-compatible ordering.
-  Every word in the grammar's language is a nodup permutation of H.verts
-  that respects the tree decomposition's bag structure. -/
-  lang_sound : ∀ (perm : List V), perm ∈ grammar.Language →
-    perm.toFinset = H.verts ∧ perm.Nodup ∧ IsTreeCompatibleOrdering td r perm
-
-axiom engelfriet_tw_to_mcfl :
-  ∀ (V : Type u) [DecidableEq V] [Fintype V]
-    (H : Hypergraph V)
-    (td : TreeDecomposition H) (r : td.I)
-    (k : ℕ) (hk : td.width ≤ k),
-      ∃ (S : StructuredMCFG td r),
-        S.grammar.dimension ≤ k + 1
+The declarations `IsTreeCompatibleOrdering`, `isTreeCompatibleOrdering_spec`,
+`isTreeCompatibleOrdering_nonempty`, `StructuredMCFG`, and
+`engelfriet_tw_to_mcfl` were **axioms** in earlier revisions of this project,
+attributed to Engelfriet (1997) / Habel (1992).  The cited works do not
+contain the bespoke statement that was attributed to them (see
+`FORMALIZATION_AUDIT.md`).  They are now a concrete grammar construction
+with machine-checked proofs in `AsymptoticBB/Grammars/TCO.lean`, imported
+above: tree-compatible orderings are *defined* as the language of the
+explicit budget-disciplined grammar `tcoGrammar`, whose dimension is bounded
+by boundary size, and the spec/nonemptiness/packaging statements are proved
+by induction on derivations and by an explicit depth-first derivation. -/
 
 /-! ## MCFL Closure Properties -/
 

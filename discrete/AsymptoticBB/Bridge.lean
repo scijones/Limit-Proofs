@@ -239,7 +239,7 @@ theorem behavior_grammar_exists
       G_beh.dimension ≤ k + 1 ∧
       G_beh.Language = A.TreeBehaviorLanguage td r Sym encode := by
   obtain ⟨S_ord, hdim⟩ :=
-    @engelfriet_tw_to_mcfl.{_, 0} V _ _ A.constraintHypergraph td r k hk
+    engelfriet_tw_to_mcfl V A.constraintHypergraph td r k hk
   let Sol := { β : ∀ v : V, D v // A.toCSP.IsSatisfying β }
   let projected : Sol → Set (List Sym) := fun β =>
     {w | ∃ perm ∈ S_ord.grammar.Language,
