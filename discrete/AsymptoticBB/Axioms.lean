@@ -8,6 +8,7 @@ import AsymptoticBB.TreeDecomposition.Defs
 import AsymptoticBB.TreeDecomposition.Boundary
 import AsymptoticBB.Grammars.Union
 import AsymptoticBB.Grammars.TCO
+import AsymptoticBB.Grammars.Homomorphism
 import AsymptoticBB.Agent.Defs
 import AsymptoticBB.Agent.Tractability
 
@@ -101,12 +102,19 @@ explicit budget-disciplined grammar `tcoGrammar`, whose dimension is bounded
 by boundary size, and the spec/nonemptiness/packaging statements are proved
 by induction on derivations and by an explicit depth-first derivation. -/
 
-/-! ## MCFL Closure Properties -/
+/-! ## MCFL Closure Properties
 
-axiom mcfg_homomorphic_image {Sym₁ : Type*} {Sym₂ : Type*}
-    (G : MCFG Sym₁) (h : Sym₁ → List Sym₂) :
-    ∃ G' : MCFG Sym₂, G'.dimension ≤ G.dimension ∧
-      G'.Language = { w : List Sym₂ | ∃ w' ∈ G.Language, w = (w'.map h).flatten }
+The homomorphic-image closure (`mcfg_homomorphic_image`, Seki et al. 1991
+Thm 3.9) was formerly an axiom here.  It is now a proved theorem in
+`AsymptoticBB.Grammars.Homomorphism` (imported below): the image grammar is
+constructed by substituting `h a` for each terminal occurrence, keeping
+variables and arities, so the dimension bound holds by construction and the
+language identity is proved by two derivation inductions.  Finite union
+(`mcfg_finite_union`) is likewise proved in `AsymptoticBB.Grammars.Union`.
+
+The remaining trust base of this project is exactly:
+- `FPT_ne_W1` (an uninterpreted hypothesis, never asserted), and
+- `thm_grohe` (Grohe 2007, the one imported literature theorem). -/
 
 /-! ### Non-vacuity of the dimension bound (trust-base note)
 
