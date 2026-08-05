@@ -1,8 +1,13 @@
 import AsymptoticBB
 
+#print axioms class_tractable_implies_bounded_core_tw
 #print axioms class_tractable_implies_bounded_tw
 #print axioms main_theorem_instantaneous_behavior
+#print axioms main_theorem_semantic_core
+#print axioms SizedCSP.satisfiable_iff_of_equivalent
+#print axioms SizedCSP.certifiable_core_bound
 #print axioms HomSystem.cspDecision_iff_of_equivalent
+#print axioms HomSystem.certifiable_behavior_core_bound
 #print axioms HomSystem.complexity_correspondence_via_core_composition
 #print axioms HomSystem.complexity_correspondence_via_static_core_witnesses
 #print axioms HomSystem.exact_complexity_correspondence_via_core_composition

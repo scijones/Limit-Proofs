@@ -68,13 +68,41 @@ def ClassBehaviorLanguage
 
 /-! ## Corollary 9.3: Tractability implies bounded treewidth -/
 
+/-- Tractability implies bounded **core** treewidth — no minimality assumed.
+
+Assume FPT ≠ W[1]. Let 𝓐 be a class of sized embodied agents sharing a
+single uniform polynomial-time belief-revision architecture, with uniformly
+bounded arity.  Then there is one constant `k` such that EVERY agent's
+constraint hypergraph has a *core* of treewidth at most `k`.
+
+This is the maximal-scope form: no `AllCores` hypothesis.  Tractability
+cannot bound raw treewidth (padding is free), but it does bound the
+treewidth of what the store is committed to — its core.  Direct from the
+faithful (core-conclusion) form of Grohe's theorem. -/
+theorem class_tractable_implies_bounded_core_tw
+    (h_conj : FPT_ne_W1)
+    (𝓐 : SizedEmbodiedAgentClass)
+    (h_re : 𝓐.RecursivelyEnumerable)
+    (h_tract : 𝓐.UniformTractableBelRevision)
+    (h_arity : 𝓐.BoundedArity) :
+    ∃ k, ∀ A ∈ 𝓐, ∃ K : SizedHypergraph,
+      SizedHypergraph.CoreOf K A.constraintSizedHypergraph ∧
+        K.HasTreewidthAtMost k := by
+  obtain ⟨k, hk⟩ := (thm_grohe h_conj 𝓐.hypergraphs h_re
+    (SizedEmbodiedAgentClass.hypergraphs_boundedArity h_arity) h_tract).1
+  refine ⟨k, ?_⟩
+  intro A hA
+  exact hk A.constraintSizedHypergraph ⟨A, hA, rfl⟩
+
 /-- Corollary 9.3 — Asymptotic version.
 
 Assume FPT ≠ W[1]. Let 𝓐 be a class of sized embodied agents (varying
 vertex-set sizes) sharing a single uniform polynomial-time belief-revision
 architecture. If 𝓐 has uniformly bounded arity and all constraint
 hypergraphs are cores, then there is one constant k such that EVERY agent
-in 𝓐 has a constraint hypergraph of treewidth at most k. -/
+in 𝓐 has a constraint hypergraph of treewidth at most k.
+
+The classes-of-cores instantiation of `thm_grohe` (its second conjunct). -/
 theorem class_tractable_implies_bounded_tw
     (h_conj : FPT_ne_W1)
     (𝓐 : SizedEmbodiedAgentClass)
@@ -83,8 +111,8 @@ theorem class_tractable_implies_bounded_tw
     (h_arity : 𝓐.BoundedArity)
     (h_cores : 𝓐.AllCores) :
     ∃ k, ∀ A ∈ 𝓐, A.agent.constraintHypergraph.HasTreewidthAtMost k := by
-  obtain ⟨k, hk⟩ := thm_grohe h_conj 𝓐.hypergraphs h_re
-    (SizedEmbodiedAgentClass.hypergraphs_boundedArity h_arity) h_cores h_tract
+  obtain ⟨k, hk⟩ := (thm_grohe h_conj 𝓐.hypergraphs h_re
+    (SizedEmbodiedAgentClass.hypergraphs_boundedArity h_arity) h_tract).2 h_cores
   refine ⟨k, ?_⟩
   intro A hA
   have : A.constraintSizedHypergraph ∈ 𝓐.hypergraphs := ⟨A, hA, rfl⟩
@@ -417,6 +445,63 @@ theorem main_theorem_instantaneous_behavior
   refine ⟨k, ?_⟩
   rw [hschedule k hk]
   exact full_behavior_bound A.agent k htw Sym encode
+
+/-! ## Main theorem without the cores hypothesis (semantic-core form) -/
+
+/-- **Main theorem, semantic-core formulation** — no `AllCores` hypothesis.
+
+The agent class carries NO minimality requirement: members may pad their
+stores with arbitrary redundancy.  Tractability then bounds the treewidth
+not of the raw stores but of their cores
+(`class_tractable_implies_bounded_core_tw`), and the ceiling applies to any
+behavior language realized at core width.
+
+`hcore_realize` is the visible semantic-adequacy hypothesis, in the style
+of `hschedule` in `main_theorem_instantaneous_behavior`.  Be precise about
+what it carries — BOTH of the following, neither of which is a theorem of
+this development:
+
+1. **Representation**: the independently supplied language `actual` of
+   certifiable behavior is the kind of object the semantic-core argument
+   applies to.  (The invariance lemma
+   `HomSystem.certifiable_behavior_core_bound` is proved axiom-free, but
+   in an abstract layer that no Lean definition connects to
+   `FullBehaviorLanguage` or to any agent object here; see its SCOPE
+   WARNING.)
+2. **Core realization**: whenever every member's core fits in width `k`,
+   `actual` is realized as the full behavior language of SOME width-`≤k`
+   representative agent — the tree-compatible-emission modeling claim
+   applied at a core representative.
+
+The mechanism-level strengthening ("the padded agent's own emission is
+organized by its core") is FALSE in general and is not claimed.  What this
+theorem establishes unconditionally is the ceiling constant: for every
+tractable class — cores or not — there is one `k` such that any behavior
+language satisfying `hcore_realize` is a `(k+1)`-MCFL.  One-sided and
+existential, per the intended scope. -/
+theorem main_theorem_semantic_core
+    (h_conj : FPT_ne_W1)
+    (𝓐 : SizedEmbodiedAgentClass)
+    (h_re : 𝓐.RecursivelyEnumerable)
+    (h_tract : 𝓐.UniformTractableBelRevision)
+    (h_arity : 𝓐.BoundedArity)
+    (Sym : Type*)
+    (actual : Set (List Sym))
+    (hcore_realize : ∀ k : ℕ,
+      (∀ B ∈ 𝓐, ∃ K : SizedHypergraph,
+        SizedHypergraph.CoreOf K B.constraintSizedHypergraph ∧
+          K.HasTreewidthAtMost k) →
+      ∃ (A' : SizedEmbodiedAgent)
+        (encode' : (v : Fin A'.n) → A'.D v → Sym),
+        A'.agent.constraintHypergraph.HasTreewidthAtMost k ∧
+          actual = A'.agent.FullBehaviorLanguage k Sym encode') :
+    ∃ k, IsMCFL.{_, 0} actual (k + 1) := by
+  obtain ⟨k, hk⟩ :=
+    class_tractable_implies_bounded_core_tw h_conj 𝓐 h_re h_tract h_arity
+  obtain ⟨A', encode', htw, hactual⟩ := hcore_realize k hk
+  refine ⟨k, ?_⟩
+  rw [hactual]
+  exact full_behavior_bound A'.agent k htw Sym encode'
 
 /-! ## Theorem 12.3: Uniform grammar family (architectural-limit form) -/
 

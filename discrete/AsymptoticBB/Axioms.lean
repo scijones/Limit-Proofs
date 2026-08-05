@@ -52,39 +52,41 @@ axiom FPT_ne_W1 : Prop
 
 /-! ## Grohe's Theorem -/
 
-/-- Theorem 5.1 (Grohe 2007) — Asymptotic version.
+/-- Theorem 5.1 (Grohe 2007, JACM Theorem 1.2) — faithful (core-conclusion)
+form.
 
 Assume FPT ≠ W[1]. Let 𝓗 be a recursively enumerable class of
-bounded-arity core hypergraphs (where different members can have different
-vertex-set sizes). If CSP restricted to instances whose constraint
-hypergraph belongs to 𝓗 is solvable in polynomial time for all choices
-of constraint relations, then 𝓗 has uniformly bounded treewidth.
+bounded-arity hypergraphs (different members may have different vertex-set
+sizes). If CSP restricted to instances whose constraint hypergraph belongs
+to 𝓗 is solvable in polynomial time for all choices of constraint
+relations, then:
 
-𝓗 : Set SizedHypergraph — each element is a pair (n, H) where
-H : Hypergraph (Fin n). Different elements can have different n,
-making the uniform k non-trivial.
+1. **the cores of 𝓗 have uniformly bounded treewidth** — there is one `k`
+   such that every member has a core of treewidth at most `k`; and
+2. if every member is itself a core, 𝓗 has uniformly bounded treewidth.
 
-Correspondences to Grohe 2007:
-- "recursively enumerable class" → SizedHypergraphClass.RecursivelyEnumerable
-- "bounded arity" → SizedHypergraphClass.BoundedArity
-- "polynomial time for all relation choices" → SizedHypergraphClass.UniformPolyTimeSolvable
-- "bounded treewidth" → SizedHypergraphClass.BoundedTreewidth
-- "core" → SizedHypergraphClass.AllCores
+Conjunct 1 is the published conclusion; conjunct 2 is its standard
+instantiation to classes of cores (the core of a core is the structure
+itself, up to isomorphism — which preserves treewidth).  Both are readings
+of the same named theorem.  The instantiation is bundled here rather than
+derived because deriving it inside Lean would require asserting auxiliary
+facts about the opaque predicates (`HomEquiv` reflexivity, core
+uniqueness); bundling keeps the trust base at exactly the named theorem.
 
-Note on the core condition (Grohe 2007, Theorem 1.2):
-Grohe's theorem concludes bounded treewidth *of cores*. Without the
-AllCores hypothesis, the class of bipartite graphs is a counterexample:
-CSP on bipartite graphs is tractable (all cores are K₁ or K₂), but
-grid graphs are bipartite with unbounded treewidth. With AllCores,
-bounded core treewidth = bounded treewidth. -/
+The core appears in the **conclusion**, not as a hypothesis on the class:
+no minimality of members is assumed.  The raw-treewidth strengthening of
+conjunct 1 is false (bipartite grids: tractable, unbounded raw treewidth,
+all cores ≤ K₂), so conjunct 1 is the strongest conclusion available and
+applies to *every* tractable class. -/
 axiom thm_grohe :
   FPT_ne_W1 →
   ∀ (𝓗 : Set SizedHypergraph),
     SizedHypergraphClass.RecursivelyEnumerable 𝓗 →
     SizedHypergraphClass.BoundedArity 𝓗 →
-    SizedHypergraphClass.AllCores 𝓗 →
     SizedHypergraphClass.UniformPolyTimeSolvable 𝓗 →
-    SizedHypergraphClass.BoundedTreewidth 𝓗
+    SizedHypergraphClass.BoundedCoreTreewidth 𝓗 ∧
+      (SizedHypergraphClass.AllCores 𝓗 →
+        SizedHypergraphClass.BoundedTreewidth 𝓗)
 
 /-! ## Tree-Compatible Orderings -/
 
@@ -114,7 +116,8 @@ language identity is proved by two derivation inductions.  Finite union
 
 The remaining trust base of this project is exactly:
 - `FPT_ne_W1` (an uninterpreted hypothesis, never asserted), and
-- `thm_grohe` (Grohe 2007, the one imported literature theorem). -/
+- `thm_grohe` (Grohe 2007, stated in its published core-conclusion form
+  together with its standard instantiation to classes of cores). -/
 
 /-! ### Non-vacuity of the dimension bound (trust-base note)
 

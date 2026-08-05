@@ -101,6 +101,31 @@ For the agent application this is natural: a non-core constraint
 hypergraph has redundant variables that could be collapsed. -/
 opaque SizedHypergraph.IsCore : SizedHypergraph → Prop
 
+/-- Homomorphic equivalence of sized hypergraphs (as standing for the
+relational structures they abstract): homomorphisms exist in both
+directions.
+
+Opaque, like `IsCore`: the homomorphism calculus is orthogonal to this
+project's contribution.  The only properties used are stated explicitly
+where cited results need them; no axiom asserts anything about
+`HomEquiv` in isolation. -/
+opaque SizedHypergraph.HomEquiv : SizedHypergraph → SizedHypergraph → Prop
+
+/-- `K` is *a core of* `H`: `K` is itself a core and is homomorphically
+equivalent to `H`.  This is the object of which Grohe's Theorem 1.2
+bounds the treewidth.  Purely extensional — no selection procedure. -/
+def SizedHypergraph.CoreOf (K H : SizedHypergraph) : Prop :=
+  SizedHypergraph.IsCore K ∧ SizedHypergraph.HomEquiv H K
+
+/-- A class of sized hypergraphs has **bounded core treewidth**: one uniform
+`k` bounds the treewidth of *some core of* every member.  This is the
+conclusion of Grohe 2007 Theorem 1.2 in its published (core) form; it is
+weaker than `BoundedTreewidth` of the members themselves and requires no
+minimality of the members. -/
+def SizedHypergraphClass.BoundedCoreTreewidth (𝓗 : Set SizedHypergraph) : Prop :=
+  ∃ k : ℕ, ∀ sH ∈ 𝓗, ∃ K : SizedHypergraph,
+    SizedHypergraph.CoreOf K sH ∧ K.HasTreewidthAtMost k
+
 /-- Every member of the class is a core (no non-trivial endomorphism).
 With this hypothesis, Grohe's bounded-core-treewidth conclusion
 is equivalent to bounded treewidth of the structures themselves. -/

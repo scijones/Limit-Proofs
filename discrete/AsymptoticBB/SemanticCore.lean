@@ -120,6 +120,38 @@ theorem decisionLanguage_eq_of_equivalent {Sym : Type u_sym} {A K : Obj}
   ext w
   exact S.cspDecision_iff_of_equivalent hAK (target w)
 
+/-- **Decision-language bounds transfer across core witnesses — in the
+abstract layer only.**
+
+This theorem is proved for an arbitrary `HomSystem` and consumes nothing
+but its identity/composition laws: if certification is homomorphism
+existence against a store-independent target, then a core witness makes
+the two decision languages *equal*, so any MCFG dimension bound transfers.
+
+SCOPE WARNING (do not overread): this lemma is stated for an arbitrary
+`HomSystem`.  A concrete instantiation at sized CSPs — with
+solution-transferring homomorphisms whose identity/composition laws are
+proved, and the concrete equisatisfiability and core-transfer corollaries
+— is provided in `AsymptoticBB/Basic/CSPHom.lean`
+(`SizedCSP.homSystem`, `SizedCSP.satisfiable_iff_of_equivalent`,
+`SizedCSP.certifiable_core_bound`).  What remains OUTSIDE any theorem:
+(1) no Lean definition identifies these certifiable decision languages
+with `EmbodiedAgent.FullBehaviorLanguage` — that identification is the
+visible `hcore_realize` hypothesis of `main_theorem_semantic_core`; and
+(2) the situation encoding `target` must be store-independent (closed
+queries); situations sharing variables with the store (interfaces) are
+not treated.  This lemma discharges the invariance half of the
+core-transfer argument and nothing more. -/
+theorem certifiable_behavior_core_bound
+    {Sym : Type u_sym} (IsCore : Obj → Prop) {A K : Obj}
+    (hAK : S.CoreWitness IsCore A K)
+    (target : List Sym → Obj) (d : ℕ)
+    (hK : IsMCFL.{u_sym, 0} (S.DecisionLanguage K target) d) :
+    S.DecisionLanguage A target = S.DecisionLanguage K target ∧
+      IsMCFL.{u_sym, 0} (S.DecisionLanguage A target) d := by
+  have hEq := S.decisionLanguage_eq_of_equivalent hAK.equivalent target
+  exact ⟨hEq, hEq ▸ hK⟩
+
 /-- The non-computational bridge for a composition of cores.  If the composed
 core decision language lies in dimension `d`, then the original composed CSP
 language lies in the same dimension, solely because the two languages are
