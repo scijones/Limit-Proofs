@@ -4,8 +4,17 @@ import AsymptoticBB
 #print axioms class_tractable_implies_bounded_tw
 #print axioms main_theorem_instantaneous_behavior
 #print axioms main_theorem_semantic_core
+#print axioms main_theorem_intendable
 #print axioms SizedCSP.satisfiable_iff_of_equivalent
 #print axioms SizedCSP.certifiable_core_bound
+#print axioms quotient_eq_fiberSubst_image
+#print axioms quotient_behavior_bound
+#print axioms CSPRetraction.soundlyReportable_iff_factorsThrough
+#print axioms certified_quotient_eq_fiberSubst_image
+#print axioms certified_quotient_behavior_bound
+#print axioms intended_record_bound
+#print axioms schedulerAgent_certifiedQuotient_nonempty
+#print axioms rigid_certified_eq_quotient
 #print axioms HomSystem.cspDecision_iff_of_equivalent
 #print axioms HomSystem.certifiable_behavior_core_bound
 #print axioms HomSystem.complexity_correspondence_via_core_composition

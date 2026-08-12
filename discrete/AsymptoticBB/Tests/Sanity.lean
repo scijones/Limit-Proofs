@@ -122,3 +122,71 @@ The non-emptiness theorem above is independent of the grammar bound.  The active
 bridge and then stitches the finite family existentially; no particular
 solution or derivation is required to be preserved.
 -/
+
+/-! ## Non-vacuity of the intendable (certified-quotient) layer -/
+
+/-- **Non-vacuity guard (certified-quotient level).**  Any agent with a
+satisfiable CSP, under the identity retraction onto itself and any rooted
+tree decomposition, has a non-empty certified-quotient behavior language:
+the identity retraction exists for every agent (`CSPRetraction.refl`),
+is rigid (`CSPRetraction.refl_rigid` — so every solution factors), action
+typing holds trivially, and any satisfying assignment with any
+tree-compatible ordering and the canonical fibration produces a record.
+Together with `certified_quotient_behavior_bound`, this rules out the
+failure mode where the intendable ceiling is met by the empty grammar. -/
+theorem EmbodiedAgent.certifiedQuotient_nonempty
+    {V : Type u} [DecidableEq V] [Fintype V]
+    {D : V → Type v} [∀ v, DecidableEq (D v)] [∀ v, Fintype (D v)]
+    (A : EmbodiedAgent V D) (hsat : A.toCSP.IsSatisfiable)
+    (td : TreeDecomposition A.constraintHypergraph) (r : td.I)
+    (Sym : Type*) (encode : (w : V) → D w → Sym) :
+    (CertifiedQuotientTreeBehaviorLanguage A A (CSPRetraction.refl A.toCSP)
+      td r encode).Nonempty := by
+  obtain ⟨β, hβ⟩ := hsat
+  obtain ⟨perm, hperm⟩ := isTreeCompatibleOrdering_nonempty td r
+  exact ⟨_, β, hβ, CSPRetraction.refl_rigid A.toCSP β hβ, perm, hperm,
+    canonicalFibration A A (CSPRetraction.refl A.toCSP),
+    canonicalFibration_valid A A (CSPRetraction.refl A.toCSP), rfl⟩
+
+/-! ## Intention as store content: a concrete scheduling witness -/
+
+/-- An agent whose store contains an explicit **order-belief** among its
+action variables: variable `0` is an ordinary action (`Bool`, constrained
+`true`); variable `1` is a scheduling decision (`Bool`, read as
+``emit variable 0 in the first half of the cycle''), constrained `true`
+by the store like any other belief.  Scheduling is not metadata here: it
+is a typed, certified, emitted piece of store content. -/
+def schedulerAgent : EmbodiedAgent (Fin 2) (fun _ => Bool) where
+  constraints := [{ scope := [0],
+                    scope_nodup := List.nodup_singleton 0,
+                    relation := fun f => f ⟨0, Nat.one_pos⟩ = true },
+                  { scope := [1],
+                    scope_nodup := List.nodup_singleton 1,
+                    relation := fun f => f ⟨0, Nat.one_pos⟩ = true }]
+  action_vars := {0, 1}
+  action_vars_nonempty := ⟨0, by decide⟩
+
+/-- `schedulerAgent` is satisfiable (everything `true`). -/
+theorem schedulerAgent_satisfiable : schedulerAgent.toCSP.IsSatisfiable := by
+  refine ⟨fun _ => true, ?_⟩
+  intro c hc
+  simp only [schedulerAgent, List.mem_cons, List.mem_singleton,
+    List.not_mem_nil, or_false] at hc
+  rcases hc with hc | hc
+  · subst hc; rfl
+  · subst hc; rfl
+
+/-- **Intention-as-content witness.**  The certified (intended-record)
+language of an agent whose action variables include an explicit
+order-belief is non-empty: scheduling decisions are representable,
+certifiable store content, and the ceiling covers them exactly as it
+covers any other action (`intended_record_bound`).  This discharges, by
+example, the reduction stated on `IntendedRecordLanguage`: "intending an
+order" is nothing over and above holding a certified order-belief. -/
+theorem schedulerAgent_certifiedQuotient_nonempty
+    (td : TreeDecomposition schedulerAgent.constraintHypergraph) (r : td.I) :
+    (CertifiedQuotientTreeBehaviorLanguage schedulerAgent schedulerAgent
+      (CSPRetraction.refl schedulerAgent.toCSP) td r
+      (coreEncode (V₂ := Fin 2) (D₂ := fun _ => Bool))).Nonempty :=
+  schedulerAgent.certifiedQuotient_nonempty schedulerAgent_satisfiable
+    td r _ coreEncode

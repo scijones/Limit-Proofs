@@ -4,6 +4,7 @@ Released under the MIT license as described in the file LICENSE.
 -/
 import AsymptoticBB.Bridge
 import AsymptoticBB.Agent.SizedAgent
+import AsymptoticBB.Basic.Intendable
 import Mathlib.Data.Fintype.List
 import Mathlib.Data.Fintype.Pi
 
@@ -502,6 +503,52 @@ theorem main_theorem_semantic_core
   refine ⟨k, ?_⟩
   rw [hactual]
   exact full_behavior_bound A'.agent k htw Sym encode'
+
+/-! ## Main theorem — intendable (certified-quotient) formulation -/
+
+/-- **Main theorem, intendable formulation.**  The end-to-end statement
+for arbitrary (padded, non-minimal, non-rigid) agents:
+
+Assume FPT ≠ W[1] and the class hypotheses.  Then there is one uniform
+`k` such that for every agent that realizes its Grohe-level narrow core
+as a concrete typed representative (`hrealize` — the visible seam between
+the opaque hypergraph layer where Grohe's theorem lives and the concrete
+CSP layer where behavior lives), the agent's certified-intendable
+behavior language is a `(k+1)`-MCFL.
+
+No rigidity hypothesis: by `soundlyReportable_iff_factorsThrough`, the
+certified language already contains every record that admits ANY sound
+token-typed description at width `k`; what it omits is indescribable at
+that width, provably.  Trust base: `FPT_ne_W1` and `thm_grohe` only. -/
+theorem main_theorem_intendable
+    (h_conj : FPT_ne_W1)
+    (𝓐 : SizedEmbodiedAgentClass)
+    (h_re : 𝓐.RecursivelyEnumerable)
+    (h_tract : 𝓐.UniformTractableBelRevision)
+    (h_arity : 𝓐.BoundedArity)
+    (hrealize : ∀ k : ℕ,
+      (∀ B ∈ 𝓐, ∃ K : SizedHypergraph,
+        SizedHypergraph.CoreOf K B.constraintSizedHypergraph ∧
+          K.HasTreewidthAtMost k) →
+      ∀ A ∈ 𝓐, ∃ (B : SizedEmbodiedAgent)
+        (R : CSPRetraction A.agent.toCSP B.agent.toCSP)
+        (td : TreeDecomposition B.agent.constraintHypergraph) (r : td.I),
+        ActionTyped A.agent B.agent R ∧ td.width ≤ k) :
+    ∃ k, ∀ A ∈ 𝓐, ∃ (B : SizedEmbodiedAgent)
+      (R : CSPRetraction A.agent.toCSP B.agent.toCSP)
+      (td : TreeDecomposition B.agent.constraintHypergraph) (r : td.I),
+      ∀ (Sym : Type) (encodeC : (w : Fin B.n) → B.D w → Sym),
+        IsMCFL.{_, 0}
+          (CertifiedQuotientTreeBehaviorLanguage A.agent B.agent R td r
+            encodeC) (k + 1) := by
+  obtain ⟨k, hk⟩ :=
+    class_tractable_implies_bounded_core_tw h_conj 𝓐 h_re h_tract h_arity
+  refine ⟨k, ?_⟩
+  intro A hA
+  obtain ⟨B, R, td, r, hat, hw⟩ := hrealize k hk A hA
+  exact ⟨B, R, td, r, fun Sym encodeC =>
+    certified_quotient_behavior_bound A.agent B.agent R hat td r k hw
+      encodeC⟩
 
 /-! ## Theorem 12.3: Uniform grammar family (architectural-limit form) -/
 
